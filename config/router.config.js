@@ -23,6 +23,19 @@ export default [
     component: '../layouts/BasicLayout',
     Routes: ['src/pages/Authorized'],
     routes: [
+      //visa
+      {
+        path: '/visa',
+        name: 'visa',
+        icon: 'visa',
+        routes: [
+          {
+            path: '/visa/applform',
+            name: 'applform',
+            component: './Visa/ProjForm',
+          },
+        ],
+      },
       // dashboard
       { path: '/', redirect: '/dashboard/analysis' },
       {
@@ -45,6 +58,7 @@ export default [
             name: 'workplace',
             component: './Dashboard/Workplace',
           },
+          { path: '/dashboard/helloant', name: 'HelloAnt', component: './Dashboard/HelloAnt' },
         ],
       },
       // forms
