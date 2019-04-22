@@ -9,6 +9,7 @@ export default {
   'menu.dashboard.workplace': '工作台',
   'menu.visa': '签证',
   'menu.visa.applform': '签证申请',
+  'menu.visa.visamng': '我的签证申请',
   'menu.form': '表单页',
   'menu.form.basicform': '基础表单',
   'menu.form.stepform': '分步表单',
