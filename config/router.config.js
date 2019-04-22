@@ -34,6 +34,11 @@ export default [
             name: 'applform',
             component: './Visa/ProjForm',
           },
+          {
+            path: '/visa/visamng',
+            name: 'visamng',
+            component: './Visa/VisaList',
+          },
         ],
       },
       // dashboard
@@ -58,7 +63,6 @@ export default [
             name: 'workplace',
             component: './Dashboard/Workplace',
           },
-          { path: '/dashboard/helloant', name: 'HelloAnt', component: './Dashboard/HelloAnt' },
         ],
       },
       // forms
