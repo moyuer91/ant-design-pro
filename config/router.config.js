@@ -39,6 +39,11 @@ export default [
             name: 'visamng',
             component: './Visa/VisaList',
           },
+          {
+            path: '/visa/visapage',
+            name: 'visapage',
+            component: './Visa/Page',
+          },
         ],
       },
       // dashboard

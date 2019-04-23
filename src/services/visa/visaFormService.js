@@ -1,11 +1,12 @@
 import request from '@/utils/request';
+import { stringify } from 'qs';
 
 export async function getVisaForm() {
   return request('/visa/form');
 }
 
-export async function getVisaPage() {
-  return request('/visa/page');
+export async function getVisaPage(params) {
+  return request(`/visa/page?${stringify(params)}`);
 }
 
 export async function saveVisaPage(params) {
@@ -15,7 +16,7 @@ export async function saveVisaPage(params) {
   });
 }
 
-export async function submitVisaPage(params) {
+export async function submitVisaForm(params) {
   return request('/visa/submission', {
     method: 'POST',
     body: params,

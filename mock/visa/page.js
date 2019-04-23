@@ -1,138 +1,221 @@
-// 代码中会兼容本地 service mock 以及部署站点的静态数据
+import { parse } from 'url';
+
+function getPage(req, res, u) {
+  const elements1 = [
+    {
+      id: '1',
+      seqNo: 1,
+      type: 1,
+      label: '姓',
+      initialValue: '张',
+      displayWhen: null,
+      options: null,
+      tip: '身份证上的名',
+      rules: [
+        {
+          required: true,
+          message: '请填写申请人的姓',
+        },
+      ],
+      placeholder: '请输入',
+    },
+    {
+      id: '2',
+      seqNo: 2,
+      type: 1,
+      label: '名',
+      initialValue: '三',
+      displayWhen: null,
+      options: null,
+      tip: '身份证上的名',
+      rules: [
+        {
+          required: true,
+          message: '请填写申请人的名',
+        },
+      ],
+      placeholder: '请输入',
+    },
+    {
+      id: '3',
+      seqNo: 3,
+      type: 2,
+      label: '性别',
+      initialValue: 1,
+      displayWhen: null,
+      options: [
+        {
+          label: '男',
+          value: 1,
+        },
+        {
+          label: '女',
+          value: 2,
+        },
+        {
+          label: '其他',
+          value: 3,
+        },
+      ],
+      tip: '申请人性别',
+      rules: [
+        {
+          required: true,
+          message: '请选择申请人性别',
+        },
+      ],
+      placeholder: null,
+    },
+    {
+      id: '5',
+      seqNo: 5,
+      type: 2,
+      label: '工作状态',
+      initialValue: null,
+      displayWhen: null,
+      options: [
+        {
+          label: '学生',
+          value: 1,
+        },
+        {
+          label: '企业员工',
+          value: 2,
+        },
+        {
+          label: '个体户',
+          value: 3,
+        },
+      ],
+      tip: '工作状态',
+      rules: [
+        {
+          required: true,
+          message: '请选择申请人工作状态',
+        },
+      ],
+      placeholder: null,
+    },
+    {
+      id: '6',
+      seqNo: 6,
+      type: 1,
+      label: '工作单位',
+      initialValue: null,
+      displayWhen: {
+        id: 6,
+        value: 2,
+      },
+      options: null,
+      tip: '工作单位',
+      rules: [
+        {
+          required: true,
+          message: '请选择申请人工作单位',
+        },
+      ],
+      placeholder: '请输入',
+    },
+    {
+      id: '4',
+      seqNo: 4,
+      type: 2,
+      label: '婚姻状态',
+      initialValue: null,
+      displayWhen: null,
+      options: [
+        {
+          label: '未婚',
+          value: 1,
+        },
+        {
+          label: '已婚',
+          value: 2,
+        },
+      ],
+      tip: '申请人性别',
+      rules: [
+        {
+          required: true,
+          message: '请选择申请人婚姻状态',
+        },
+      ],
+      placeholder: null,
+    },
+  ];
+
+  const elements2 = [
+    {
+      id: '7',
+      seqNo: 7,
+      type: 2,
+      label: '是否求学',
+      initialValue: null,
+      displayWhen: null,
+      options: [
+        {
+          label: '是',
+          value: 1,
+        },
+        {
+          label: '否',
+          value: 0,
+        },
+      ],
+      tip: '是否到当地上学',
+      rules: [
+        {
+          required: true,
+          message: '请选择至少一项',
+        },
+      ],
+      placeholder: null,
+    },
+    {
+      id: '8',
+      seqNo: 8,
+      type: 2,
+      label: '是否访问亲友',
+      initialValue: null,
+      displayWhen: null,
+      options: [
+        {
+          label: '是',
+          value: 1,
+        },
+        {
+          label: '否',
+          value: 0,
+        },
+      ],
+      tip: '是否访问亲友',
+      rules: [
+        {
+          required: true,
+          message: '请选择至少一项',
+        },
+      ],
+      placeholder: null,
+    },
+  ];
+
+  let url = u;
+  if (!url || Object.prototype.toString.call(url) !== '[object String]') {
+    url = req.url; // eslint-disable-line
+  }
+
+  const params = parse(url, true).query;
+
+  const elementsList = [elements1, elements2];
+  const actElems = elementsList[params.pageId];
+  const result = {
+    title: '基本信息',
+    content: '申请人基本信息，如姓名，性别等',
+    elems: actElems,
+  };
+  return res.json(result);
+}
+
 export default {
-  // 支持值为 Object 和 Array
-  'GET /api/currentUser': {
-    name: 'Serati Ma',
-    avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
-    userid: '00000001',
-    email: 'antdesign@alipay.com',
-    signature: '海纳百川，有容乃大',
-    title: '交互专家',
-    group: '蚂蚁金服－某某某事业群－某某平台部－某某技术部－UED',
-    tags: [
-      {
-        key: '0',
-        label: '很有想法的',
-      },
-      {
-        key: '1',
-        label: '专注设计',
-      },
-      {
-        key: '2',
-        label: '辣~',
-      },
-      {
-        key: '3',
-        label: '大长腿',
-      },
-      {
-        key: '4',
-        label: '川妹子',
-      },
-      {
-        key: '5',
-        label: '海纳百川',
-      },
-    ],
-    notifyCount: 12,
-    unreadCount: 11,
-    country: 'China',
-    geographic: {
-      province: {
-        label: '浙江省',
-        key: '330000',
-      },
-      city: {
-        label: '杭州市',
-        key: '330100',
-      },
-    },
-    address: '西湖区工专路 77 号',
-    phone: '0752-268888888',
-  },
-  // GET POST 可省略
-  'GET /api/users': [
-    {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      address: 'New York No. 1 Lake Park',
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: 'London No. 1 Lake Park',
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park',
-    },
-  ],
-  'POST /api/login/account': (req, res) => {
-    const { password, userName, type } = req.body;
-    if (password === 'ant.design' && userName === 'admin') {
-      res.send({
-        status: 'ok',
-        type,
-        currentAuthority: 'admin',
-      });
-      return;
-    }
-    if (password === 'ant.design' && userName === 'user') {
-      res.send({
-        status: 'ok',
-        type,
-        currentAuthority: 'user',
-      });
-      return;
-    }
-    res.send({
-      status: 'error',
-      type,
-      currentAuthority: 'guest',
-    });
-  },
-  'POST /api/register': (req, res) => {
-    res.send({ status: 'ok', currentAuthority: 'user' });
-  },
-  'GET /api/500': (req, res) => {
-    res.status(500).send({
-      timestamp: 1513932555104,
-      status: 500,
-      error: 'error',
-      message: 'error',
-      path: '/base/category/list',
-    });
-  },
-  'GET /api/404': (req, res) => {
-    res.status(404).send({
-      timestamp: 1513932643431,
-      status: 404,
-      error: 'Not Found',
-      message: 'No message available',
-      path: '/base/category/list/2121212',
-    });
-  },
-  'GET /api/403': (req, res) => {
-    res.status(403).send({
-      timestamp: 1513932555104,
-      status: 403,
-      error: 'Unauthorized',
-      message: 'Unauthorized',
-      path: '/base/category/list',
-    });
-  },
-  'GET /api/401': (req, res) => {
-    res.status(401).send({
-      timestamp: 1513932555104,
-      status: 401,
-      error: 'Unauthorized',
-      message: 'Unauthorized',
-      path: '/base/category/list',
-    });
-  },
+  'GET /visa/page': getPage,
 };
