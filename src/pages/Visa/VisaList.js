@@ -71,7 +71,6 @@ const CreateForm = Form.create()(props => {
     </Modal>
   );
 });
-
 /* eslint react/no-multi-comp:0 */
 @connect(({ visaList, loading }) => ({
   visaList,
@@ -374,7 +373,6 @@ class VisaList extends PureComponent {
     const initFormParams = { countryItems, presentCityItems, visaTypeItems, statusItems };
 
     const { selectedRows, modalVisible, updateModalVisible, stepFormValues } = this.state;
-
     const parentMethods = {
       handleAdd: this.handleAdd,
       handleModalVisible: this.handleModalVisible,

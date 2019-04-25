@@ -2,19 +2,18 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import {
   Form,
-  // Input,
+  Input,
   // DatePicker,
   // Select,
   Button,
   Card,
   // InputNumber,
-  // Radio,
-  // Icon,
-  // Tooltip,
+  Radio,
+  Icon,
+  Tooltip,
 } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-import PageElement from './PageElement';
-// import styles from './style.less';
+import styles from './style.less';
 
 const FormItem = Form.Item;
 // const { Option } = Select;
@@ -78,23 +77,65 @@ class Page extends PureComponent {
         sm: { span: 10, offset: 7 },
       },
     };
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 7 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 12 },
+        md: { span: 10 },
+      },
+    };
 
     const formItems = elems.map(elem => {
+      const { id, type, label, initialValue, displayWhen, options, tip, rules, placeholder } = elem;
+      let display = 'block';
+      if (displayWhen !== null && displayWhen !== undefined) {
+        display = getFieldValue(displayWhen.id) === displayWhen.value ? 'block' : 'none';
+      }
+      if (display === 'none') {
+        return null;
+      }
+
+      let elemItem = null;
+      if (type === 1) {
+        elemItem = getFieldDecorator(id, {
+          initialValue,
+          rules,
+        })(<Input placeholder={placeholder} style={{ display }} />);
+      } else if (type === 2) {
+        elemItem = getFieldDecorator(id, {
+          initialValue,
+          rules,
+        })(
+          <Radio.Group
+            options={options}
+            style={{
+              display,
+            }}
+          />
+        );
+      }
       return (
-        <PageElement
-          key={elem.id}
-          getFieldDecorator={getFieldDecorator}
-          getFieldValue={getFieldValue}
-          id={elem.id}
-          type={elem.type}
-          label={elem.label}
-          initialValue={elem.initialValue}
-          displayWhen={elem.displayWhen}
-          options={elem.options}
-          tip={elem.tip}
-          rules={elem.rules}
-          placeholder={elem.placeholder}
-        />
+        <FormItem
+          {...formItemLayout}
+          label={
+            <span>
+              {label}&nbsp;&nbsp;
+              {tip !== null && tip !== undefined && tip !== '' && (
+                <em className={styles.optional}>
+                  <Tooltip title={tip}>
+                    <Icon type="info-circle-o" style={{ marginRight: 4 }} />
+                  </Tooltip>
+                </em>
+              )}
+            </span>
+          }
+        >
+          {elemItem}
+        </FormItem>
       );
     });
 

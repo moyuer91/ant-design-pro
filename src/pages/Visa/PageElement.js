@@ -89,7 +89,6 @@ class PageElement extends PureComponent {
         {content}
       </FormItem>
     );
-
     return formItem;
   }
 }

@@ -215,7 +215,6 @@ function getPage(req, res, u) {
   };
   return res.json(result);
 }
-
 export default {
   'GET /visa/page': getPage,
 };
