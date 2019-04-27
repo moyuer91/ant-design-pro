@@ -1,35 +1,36 @@
-import { getVisaPage,saveVisaPage,submitVisaPage } from '@/services/visa/visaFormService';
-import {message} from "antd/lib/index";
+import { message } from 'antd/lib/index';
+import { getVisaForm, submitVisaForm } from '../../../services/visa/VisaFormService';
 
 export default {
-  namespace: 'visapage',
+  namespace: 'visaform',
 
   state: {
     title: '',
-    content: '',
-    elems: [],
+    description: '',
+    activePageId: 1,
+    pages: [],
   },
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(getVisaPage, payload);
+      const response = yield call(getVisaForm, payload);
       yield put({
-        type: 'getPage',
+        type: 'getForm',
         payload: { ...response },
       });
     },
-    *savePage({ payload }, { call }) {
-      const response = yield call(saveVisaPage, payload);
-      message.success('保存成功');
+    *submitForm({ payload }, { call }) {
+      const response = yield call(submitVisaForm, payload);
+      if (response.errorNo === '0') {
+        message.success('保存成功');
+      } else {
+        message.error('保存失败');
+      }
     },
-    *submitPage({ payload }, { call }) {
-      const response = yield call(submitVisaPage, payload);
-      message.success('提交成功');
-    },
-},
+  },
 
   reducers: {
-    getPage(state, action) {
+    getForm(state, action) {
       return {
         ...state,
         ...action.payload,

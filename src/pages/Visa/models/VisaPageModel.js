@@ -1,4 +1,5 @@
-import { getVisaPage } from '@/services/visa/visaFormService';
+import { message } from 'antd/lib/index';
+import { getVisaPage, saveVisaPage } from '../../../services/visa/VisaFormService';
 
 export default {
   namespace: 'visapage',
@@ -16,6 +17,14 @@ export default {
         type: 'getPage',
         payload: { ...response },
       });
+    },
+    *savePage({ payload }, { call }) {
+      const response = yield call(saveVisaPage, payload);
+      if (response.errorNo === '0') {
+        message.success('保存成功');
+      } else {
+        message.error('保存失败');
+      }
     },
   },
 

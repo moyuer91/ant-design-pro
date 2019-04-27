@@ -206,15 +206,30 @@ function getPage(req, res, u) {
 
   const params = parse(url, true).query;
 
-  const elementsList = [elements1, elements2];
-  const actElems = elementsList[params.pageId];
-  const result = {
-    title: '基本信息',
-    content: '申请人基本信息，如姓名，性别等',
-    elems: actElems,
-  };
+  const pageList = [
+    {
+      title: '基本信息',
+      content: '申请人基本信息，如姓名，性别等',
+      elems: elements1,
+    },
+    {
+      title: '入境信息',
+      content: '入境信息,如访问目的,滞留时间等',
+      elems: elements2,
+    },
+  ];
+  const result = pageList[params.pageId - 1];
   return res.json(result);
 }
+
 export default {
   'GET /visa/page': getPage,
+  'POST /visa/page': {
+    errorNo: 0,
+    errorMsg: '',
+  },
+  'POST /visa/form': {
+    errorNo: 0,
+    errorMsg: '',
+  },
 };

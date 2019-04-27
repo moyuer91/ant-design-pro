@@ -1,4 +1,4 @@
-import { getVisaList, getVisaInitInfo } from '@/services/visa/visaMngService';
+import { getVisaList, getVisaInitInfo } from '@/services/visa/VisaMngService';
 
 export default {
   namespace: 'visaList',

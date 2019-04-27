@@ -17,7 +17,7 @@ export async function saveVisaPage(params) {
 }
 
 export async function submitVisaForm(params) {
-  return request('/visa/submission', {
+  return request('/visa/form', {
     method: 'POST',
     body: params,
   });
