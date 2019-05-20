@@ -82,6 +82,12 @@ export default {
   //     pathRewrite: { '^/server': '' },
   //   },
   // },
+  proxy: {
+    '/visaservice': {
+      target: 'http://127.0.0.1:8801/',
+      changeOrigin: true,
+    },
+  },
   ignoreMomentLocale: true,
   lessLoaderOptions: {
     javascriptEnabled: true,

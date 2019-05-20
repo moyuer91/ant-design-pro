@@ -121,7 +121,7 @@ class VisaList extends PureComponent {
   };
 
   previewItem = id => {
-    router.push(`/profile/basic/${id}`);
+    router.push(`/visa/applform/${id}`);
   };
 
   handleFormReset = () => {
@@ -219,7 +219,7 @@ class VisaList extends PureComponent {
   };
 
   renderSimpleForm(initInfo) {
-    const { countryOptItems, visaTypeItems } = initInfo;
+    const { countryItems, typeItems } = initInfo;
     const {
       form: { getFieldDecorator },
     } = this.props;
@@ -231,16 +231,16 @@ class VisaList extends PureComponent {
             <FormItem label="申请国家">
               {getFieldDecorator('country')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
-                  {countryOptItems}
+                  {countryItems}
                 </Select>
               )}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="签证类型">
-              {getFieldDecorator('visaType')(
+              {getFieldDecorator('type')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
-                  {visaTypeItems}
+                  {typeItems}
                 </Select>
               )}
             </FormItem>
@@ -264,7 +264,7 @@ class VisaList extends PureComponent {
   }
 
   renderAdvancedForm(initInfo) {
-    const { countryItems, presentCityItems, visaTypeItems, statusItems } = initInfo;
+    const { countryItems, presentCityItems, typeItems, statusItems } = initInfo;
     const {
       form: { getFieldDecorator },
     } = this.props;
@@ -282,16 +282,16 @@ class VisaList extends PureComponent {
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="签证类型">
-              {getFieldDecorator('visaType')(
+              {getFieldDecorator('type')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
-                  {visaTypeItems}
+                  {typeItems}
                 </Select>
               )}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="状态">
-              {getFieldDecorator('visaType')(
+              {getFieldDecorator('type')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
                   {statusItems}
                 </Select>
@@ -352,8 +352,33 @@ class VisaList extends PureComponent {
       visaList: { visaList, initInfo },
       loading,
     } = this.props;
-    const { countries, presentCities, visaTypes, statusOpts } = initInfo;
+    const tableData = {
+      list: visaList,
+    };
+    const { countries, presentCities, types, statusOpts } = initInfo;
+    const countriesMap = {};
+    if (countries) {
+      for (let i = 0; i < countries.length; i += 1) {
+        const item = countries[i];
+        countriesMap[item.value] = item.label;
+      }
+    }
 
+    const typesMap = {};
+    if (types) {
+      for (let i = 0; i < types.length; i += 1) {
+        const item = types[i];
+        typesMap[item.value] = item.label;
+      }
+    }
+
+    const presentCitiesMap = {};
+    if (presentCities) {
+      for (let i = 0; i < presentCities.length; i += 1) {
+        const item = presentCities[i];
+        presentCitiesMap[item.value] = item.label;
+      }
+    }
     const countryItems = countries
       ? countries.map(item => <Option value={item.value}>{item.label}</Option>)
       : [];
@@ -362,15 +387,15 @@ class VisaList extends PureComponent {
       ? presentCities.map(item => <Option value={item.value}>{item.label}</Option>)
       : [];
 
-    const visaTypeItems = visaTypes
-      ? visaTypes.map(item => <Option value={item.value}>{item.label}</Option>)
+    const typeItems = types
+      ? types.map(item => <Option value={item.value}>{item.label}</Option>)
       : [];
 
     const statusItems = statusOpts
       ? statusOpts.map(item => <Option value={item.value}>{item.label}</Option>)
       : [];
 
-    const initFormParams = { countryItems, presentCityItems, visaTypeItems, statusItems };
+    const initFormParams = { countryItems, presentCityItems, typeItems, statusItems };
 
     const { selectedRows, modalVisible, updateModalVisible, stepFormValues } = this.state;
     const parentMethods = {
@@ -384,27 +409,32 @@ class VisaList extends PureComponent {
 
     const columns = [
       {
+        title: '签证编号',
+        dataIndex: 'id',
+        render: text => <a onClick={() => this.previewItem(text)}>{text}</a>,
+      },
+      {
         title: '申请人',
         dataIndex: 'applicant',
-        render: text => <a onClick={() => this.previewItem(text)}>{text}</a>,
+        render: val => val,
       },
       {
         title: '国家',
         dataIndex: 'country',
         sorter: true,
-        render: val => val,
+        render: val => (countriesMap[val] ? countriesMap[val] : val),
       },
       {
         title: '签证类型',
-        dataIndex: 'visaType',
+        dataIndex: 'type',
         sorter: true,
-        render: val => val,
+        render: val => (typesMap[val] ? typesMap[val] : val),
       },
       {
         title: '送签城市',
         dataIndex: 'city',
         sorter: true,
-        render: val => val,
+        render: val => (presentCitiesMap[val] ? presentCitiesMap[val] : val),
       },
       {
         title: '创建时间',
@@ -445,9 +475,10 @@ class VisaList extends PureComponent {
               )}
             </div>
             <StandardTable
+              rowKey="id"
               selectedRows={selectedRows}
               loading={loading}
-              data={visaList}
+              data={tableData}
               columns={columns}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}

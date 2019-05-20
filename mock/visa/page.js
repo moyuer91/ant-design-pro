@@ -71,7 +71,7 @@ function getPage(req, res, u) {
       seqNo: 5,
       type: 2,
       label: '工作状态',
-      initialValue: null,
+      value: null,
       displayWhen: null,
       options: [
         {
@@ -101,7 +101,7 @@ function getPage(req, res, u) {
       seqNo: 6,
       type: 1,
       label: '工作单位',
-      initialValue: null,
+      value: null,
       displayWhen: {
         id: 6,
         value: 2,
@@ -121,7 +121,7 @@ function getPage(req, res, u) {
       seqNo: 4,
       type: 2,
       label: '婚姻状态',
-      initialValue: null,
+      value: null,
       displayWhen: null,
       options: [
         {
@@ -150,7 +150,7 @@ function getPage(req, res, u) {
       seqNo: 7,
       type: 2,
       label: '是否求学',
-      initialValue: null,
+      value: null,
       displayWhen: null,
       options: [
         {
@@ -176,7 +176,7 @@ function getPage(req, res, u) {
       seqNo: 8,
       type: 2,
       label: '是否访问亲友',
-      initialValue: null,
+      value: null,
       displayWhen: null,
       options: [
         {
@@ -223,12 +223,8 @@ function getPage(req, res, u) {
 }
 
 export default {
-  'GET /visa/page': getPage,
-  'POST /visa/page': {
-    errorNo: 0,
-    errorMsg: '',
-  },
-  'POST /visa/form': {
+  'GET /visaservice/page': getPage,
+  'POST /visaservice/page': {
     errorNo: 0,
     errorMsg: '',
   },

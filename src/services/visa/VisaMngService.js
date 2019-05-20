@@ -8,10 +8,10 @@ export async function createVisaApplication(params) {
   });
 }
 
-export async function getVisaList(params) {
-  return request(`/visa/visa-list?${stringify(params)}`);
+export async function getProjectList(params) {
+  return request(`/visaservice/project-list?${stringify(params)}`);
 }
 
-export async function getVisaInitInfo(params) {
-  return request(`/visa/visa-init-info?${stringify(params)}`);
+export async function getMngInitInfo(params) {
+  return request(`/visaservice/mng-init-info?${stringify(params)}`);
 }

@@ -5,14 +5,22 @@ export default {
   namespace: 'visapage',
 
   state: {
-    title: '',
-    content: '',
-    elems: [],
+    pageName: '',
+    descr: '',
+    elements: [],
   },
 
   effects: {
     *fetch({ payload }, { call, put }) {
       const response = yield call(getVisaPage, payload);
+      const { elements } = response;
+      for (let i = 0; i < elements.length; i += 1) {
+        const elem = elements[i];
+        const { elementCfg } = elem;
+        elem.type = elementCfg.type;
+        elem.rules = JSON.parse(elem.rules);
+        elem.options = JSON.parse(elem.options);
+      }
       yield put({
         type: 'getPage',
         payload: { ...response },

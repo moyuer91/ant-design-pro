@@ -37,7 +37,7 @@ class ProjForm extends PureComponent {
     } = this.props;
 
     const { activePageId } = this.state;
-    const tabpanes = pages.map(page => <TabPane tab={page.title} key={page.id} />);
+    const tabpanes = pages.map(page => <TabPane tab={page.pageName} key={page.id} />);
     // let curPage;
     // if(this.pageList[activePageId]){
     //   curPage = this.pageList[activePageId];

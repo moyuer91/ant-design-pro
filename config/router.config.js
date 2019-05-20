@@ -30,7 +30,7 @@ export default [
         icon: 'visa',
         routes: [
           {
-            path: '/visa/applform',
+            path: '/visa/applform/:id',
             name: 'applform',
             component: './Visa/ProjForm',
           },

@@ -69,7 +69,7 @@ class Page extends PureComponent {
   render() {
     const {
       submitting,
-      visapage: { title, content, elems },
+      visapage: { pageName, descr, elements },
     } = this.props;
     const {
       form: { getFieldDecorator, getFieldValue },
@@ -93,8 +93,8 @@ class Page extends PureComponent {
       },
     };
 
-    const formItems = elems.map(elem => {
-      const { id, type, label, initialValue, displayWhen, options, tip, rules, placeholder } = elem;
+    const formItems = elements.map(elem => {
+      const { id, type, label, value, displayWhen, options, tip, rules, placeholder } = elem;
       let display = 'block';
       if (displayWhen !== null && displayWhen !== undefined) {
         display = getFieldValue(displayWhen.id) === displayWhen.value ? 'block' : 'none';
@@ -105,13 +105,13 @@ class Page extends PureComponent {
 
       let elemItem = null;
       if (type === 1) {
-        elemItem = getFieldDecorator(id, {
-          initialValue,
+        elemItem = getFieldDecorator(id.toString(), {
+          initialValue: value,
           rules,
         })(<Input placeholder={placeholder} style={{ display }} />);
-      } else if (type === 2) {
-        elemItem = getFieldDecorator(id, {
-          initialValue,
+      } else if (type === 6) {
+        elemItem = getFieldDecorator(id.toString(), {
+          initialValue: value,
           rules,
         })(
           <Radio.Group
@@ -146,8 +146,8 @@ class Page extends PureComponent {
 
     return (
       <div style={{ margin: '0x 24px 0' }}>
-        <PageHeader title={title}>
-          <Paragraph>{content}</Paragraph>
+        <PageHeader title={pageName}>
+          <Paragraph>{descr}</Paragraph>
         </PageHeader>
         <Divider style={{ margin: '0 0 0' }} />
         <div>

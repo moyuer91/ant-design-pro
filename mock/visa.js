@@ -3,27 +3,33 @@ import { parse } from 'url';
 function getVisaList(req, res, u) {
   const tableListDataSource = [
     {
-      key: 1,
-      country: '美国',
-      visaType: '商务',
+      id: 1,
+      prjCfg: {
+        country: '美国',
+        type: '商务',
+      },
       applicant: '张三',
       city: '北京',
       createdAt: new Date(),
       status: 0,
     },
     {
-      key: 2,
-      country: '法国',
-      visaType: '旅游',
+      id: 2,
+      prjCfg: {
+        country: '法国',
+        type: '旅游',
+      },
       applicant: '李四',
       city: '杭州',
       createdAt: new Date(),
       status: 1,
     },
     {
-      key: 3,
-      country: '意大利',
-      visaType: '旅游',
+      id: 3,
+      prjCfg: {
+        country: '意大利',
+        type: '旅游',
+      },
       applicant: '王五',
       city: '上海',
       createdAt: new Date(),
@@ -177,7 +183,7 @@ function getVisaInitInfo(req, res) {
       label: '成都',
     },
   ];
-  const visaTypes = [
+  const types = [
     {
       value: '1',
       label: '旅游',
@@ -205,7 +211,7 @@ function getVisaInitInfo(req, res) {
       label: '异常',
     },
   ];
-  return res.json({ countries, presentCities, visaTypes, statusOpts });
+  return res.json({ countries, presentCities, types, statusOpts });
 }
 
 export default {
