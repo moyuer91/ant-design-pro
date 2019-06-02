@@ -1,28 +1,63 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import GridContent from '@/components/PageHeaderWrapper/GridContent';
+import * as moment from 'moment';
 import {
   Form,
   Input,
-  // DatePicker,
-  // Select,
+  DatePicker,
+  TimePicker,
+  Select,
   Typography,
   Button,
   Card,
   PageHeader,
   Divider,
   // InputNumber,
+  Cascader,
   Radio,
   Icon,
   Tooltip,
 } from 'antd';
 import styles from './style.less';
+import TableFormItem from './TableFormItem';
 
 const { Paragraph } = Typography;
 const FormItem = Form.Item;
-// const { Option } = Select;
-// const { RangePicker } = DatePicker;
-// const { TextArea } = Input;
+
+const cascaDerOpitons = [
+  {
+    value: 'zhejiang',
+    label: 'Zhejiang',
+    children: [
+      {
+        value: 'hangzhou',
+        label: 'Hangzhou',
+        children: [
+          {
+            value: 'xihu',
+            label: 'West Lake',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    value: 'jiangsu',
+    label: 'Jiangsu',
+    children: [
+      {
+        value: 'nanjing',
+        label: 'Nanjing',
+        children: [
+          {
+            value: 'zhonghuamen',
+            label: 'Zhong Hua Men',
+          },
+        ],
+      },
+    ],
+  },
+];
 
 @connect(({ visapage, loading }) => ({
   visapage,
@@ -74,7 +109,6 @@ class Page extends PureComponent {
     const {
       form: { getFieldDecorator, getFieldValue },
     } = this.props;
-
     const submitFormLayout = {
       wrapperCol: {
         xs: { span: 24, offset: 0 },
@@ -94,7 +128,18 @@ class Page extends PureComponent {
     };
 
     const formItems = elements.map(elem => {
-      const { id, type, label, value, displayWhen, options, tip, rules, placeholder } = elem;
+      const {
+        id,
+        type,
+        label,
+        value,
+        displayWhen,
+        options,
+        tip,
+        rules,
+        script,
+        placeholder,
+      } = elem;
       let display = 'block';
       if (displayWhen !== null && displayWhen !== undefined) {
         display = getFieldValue(displayWhen.id) === displayWhen.value ? 'block' : 'none';
@@ -121,7 +166,62 @@ class Page extends PureComponent {
             }}
           />
         );
+      } else if (type === 4) {
+        elemItem = getFieldDecorator(id.toString(), {
+          initialValue: moment(value, 'YYYYMMDD'),
+          rules,
+        })(<DatePicker />);
+      } else if (type === 5) {
+        elemItem = getFieldDecorator(id.toString(), {
+          initialValue: moment(value, 'HHmmss'),
+          rules,
+        })(<TimePicker />);
+      } else if (type === 10) {
+        elemItem = getFieldDecorator(id.toString(), {
+          initialValue: value,
+          rules,
+        })(
+          <Select>
+            {options.map(option => (
+              <Select.Option key={option.value} value={option.value}>
+                {option.label}
+              </Select.Option>
+            ))}
+          </Select>
+        );
+      } else if (type === 11) {
+        elemItem = getFieldDecorator(id.toString(), {
+          initialValue: value,
+          rules,
+        })(<Cascader options={cascaDerOpitons} />);
+      } else if (type === 20) {
+        try {
+          const columnsCfg = JSON.parse(script);
+          const tableData = JSON.parse(value);
+          elemItem = getFieldDecorator(id.toString(), {
+            initialValue: {
+              tableData,
+              columnsCfg,
+            },
+            rules,
+          })(<TableFormItem />);
+        } catch (e) {
+          console.log(e.toString());
+          // throw new Error('invalid elem prop', e);
+        }
       }
+
+      if (type === 20) {
+        return <FormItem key={elem.id}>{elemItem}</FormItem>;
+      }
+      if (type === 3) {
+        return (
+          <Card title={label} bordered={false}>
+            {tip && <Card.Meta description={tip} />}
+          </Card>
+        );
+      }
+
       return (
         <FormItem
           key={elem.id}
@@ -129,10 +229,14 @@ class Page extends PureComponent {
           label={
             <span>
               {label}&nbsp;&nbsp;
-              {tip !== null && tip !== undefined && tip !== '' && (
+              {tip && (
                 <em className={styles.optional}>
                   <Tooltip title={tip}>
-                    <Icon type="info-circle-o" style={{ marginRight: 4 }} />
+                    <Icon
+                      type="question-circle"
+                      theme="filled"
+                      style={{ marginRight: 4, color: '#08c' }}
+                    />
                   </Tooltip>
                 </em>
               )}
@@ -145,33 +249,27 @@ class Page extends PureComponent {
     });
 
     return (
-      <div style={{ margin: '0x 24px 0' }}>
+      <div>
         <PageHeader title={pageName}>
           <Paragraph>{descr}</Paragraph>
+          <Divider style={{ margin: '0 0 0' }} />
+          <Form onSubmit={this.handleSubmit} style={{ marginTop: 8 }}>
+            {formItems}
+            <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
+              <Button style={{ marginLeft: 8 }} onClick={this.handleSave}>
+                保存
+              </Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={submitting}
+                style={{ marginLeft: 8 }}
+              >
+                提交
+              </Button>
+            </FormItem>
+          </Form>
         </PageHeader>
-        <Divider style={{ margin: '0 0 0' }} />
-        <div>
-          <GridContent>
-            <Card bordered={false}>
-              <Form onSubmit={this.handleSubmit} hideRequiredMark style={{ marginTop: 8 }}>
-                {formItems}
-                <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
-                  <Button style={{ marginLeft: 8 }} onClick={this.handleSave}>
-                    保存
-                  </Button>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    loading={submitting}
-                    style={{ marginLeft: 8 }}
-                  >
-                    提交
-                  </Button>
-                </FormItem>
-              </Form>
-            </Card>
-          </GridContent>
-        </div>
       </div>
     );
   }
