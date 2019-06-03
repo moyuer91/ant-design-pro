@@ -1,5 +1,6 @@
 import { message } from 'antd/lib/index';
 import { getVisaPage, saveVisaPage } from '../../../services/visa/VisaFormService';
+import { getCheckedData } from '@/utils/VisaUtils';
 
 export default {
   namespace: 'visapage',
@@ -13,17 +14,16 @@ export default {
   effects: {
     *fetch({ payload }, { call, put }) {
       const response = yield call(getVisaPage, payload);
-      const { elements } = response;
+      const pageInfo = getCheckedData(response);
+      const { elements } = pageInfo;
       for (let i = 0; i < elements.length; i += 1) {
         const elem = elements[i];
-        const { elementCfg } = elem;
-        elem.type = elementCfg.type;
         elem.rules = JSON.parse(elem.rules);
         elem.options = JSON.parse(elem.options);
       }
       yield put({
         type: 'getPage',
-        payload: { ...response },
+        payload: { ...pageInfo },
       });
     },
     *savePage({ payload }, { call }) {

@@ -38,13 +38,6 @@ class ProjForm extends PureComponent {
 
     const { activePageId } = this.state;
     const tabpanes = pages.map(page => <TabPane tab={page.pageName} key={page.id} />);
-    // let curPage;
-    // if(this.pageList[activePageId]){
-    //   curPage = this.pageList[activePageId];
-    // }else{
-    //   curPage = <Page id={activePageId} key={activePageId} />;
-    //   this.pageList[activePageId]=curPage;
-    // }
 
     const curPage = <Page id={activePageId} key={activePageId} />;
     return (
@@ -55,7 +48,7 @@ class ProjForm extends PureComponent {
           </Tabs>
         </Card>
         <Content style={{ margin: '24px 16px 0' }}>
-          <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>{curPage}</div>
+          <div style={{ padding: 24, minHeight: 360 }}>{curPage}</div>
         </Content>
       </Layout>
     );

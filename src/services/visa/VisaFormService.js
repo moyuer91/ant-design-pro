@@ -4,23 +4,23 @@ import request from '@/utils/request';
 export async function getVisaProject(params) {
   const { projectId } = params;
   console.log(`projectId:${projectId}`);
-  return request(`/visaservice/project/${projectId}`);
+  return request(`/visaservice/projects/${projectId}`);
 }
 
 export async function getVisaPage(params) {
   const { pageId } = params;
-  return request(`/visaservice/page/${pageId}`);
+  return request(`/visaservice/pages/${pageId}`);
 }
 
 export async function saveVisaPage(params) {
-  return request('/visaservice/page', {
+  return request('/visaservice/pages', {
     method: 'POST',
     body: params,
   });
 }
 
 export async function submitVisaProject(params) {
-  return request('/visaservice/project', {
+  return request('/visaservice/projects', {
     method: 'POST',
     body: params,
   });

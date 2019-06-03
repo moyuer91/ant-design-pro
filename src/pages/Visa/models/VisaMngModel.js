@@ -1,4 +1,5 @@
 import { getProjectList, getMngInitInfo } from '@/services/visa/VisaMngService';
+import { getCheckedData } from '@/utils/VisaUtils';
 
 export default {
   namespace: 'visaList',
@@ -12,15 +13,15 @@ export default {
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      const visaList = yield call(getProjectList, payload);
+      const visaInfo = yield call(getProjectList, payload);
+      const visaList = getCheckedData(visaInfo);
       for (let i = 0; i < visaList.length; i += 1) {
         const visa = visaList[i];
-        const { prjCfg } = visa;
         visa.key = visa.id;
-        visa.country = prjCfg.country;
-        visa.type = prjCfg.type;
       }
-      const initInfo = yield call(getMngInitInfo, payload);
+
+      const initData = yield call(getMngInitInfo, payload);
+      const initInfo = getCheckedData(initData);
       yield put({
         type: 'queryList',
         payload: {
