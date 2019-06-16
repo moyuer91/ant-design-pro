@@ -71,7 +71,6 @@ class PageElement extends PureComponent {
         />
       );
     }
-
     const formItem = (
       <FormItem
         {...formItemLayout}

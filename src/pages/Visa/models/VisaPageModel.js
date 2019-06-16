@@ -18,20 +18,50 @@ export default {
       const { elements } = pageInfo;
       for (let i = 0; i < elements.length; i += 1) {
         const elem = elements[i];
-        elem.rules = JSON.parse(elem.rules);
-        elem.options = JSON.parse(elem.options);
+        try {
+          elem.rules = elem.rules ? JSON.parse(elem.rules) : '';
+          elem.options = elem.options ? JSON.parse(elem.options) : '';
+        } catch (e) {
+          message.error(e.toString());
+        }
       }
       yield put({
         type: 'getPage',
         payload: { ...pageInfo },
       });
     },
-    *savePage({ payload }, { call }) {
-      const response = yield call(saveVisaPage, payload);
-      if (response.errorNo === '0') {
+    *save({ payload }, { call }) {
+      const { prjId, values, elementsMap } = payload;
+      const data = [];
+      Object.keys(values).forEach(key => {
+        let finalValue = values[key];
+        if (elementsMap[key]) {
+          const { type } = elementsMap[key];
+          if (type === 20) {
+            // 表格类元素需要特殊处理
+            finalValue = JSON.stringify(values[key].tableData);
+          } else if (type === 4) {
+            // 日期控件 需要将moment转为 YYYYMMDD
+            finalValue = values[key].format('YYYYMMDD');
+          } else if (type === 5) {
+            // 时间控件 将moment转为 HHmmss
+            finalValue = values[key].format('HHmmss');
+          } else if (type === 11) {
+            finalValue = JSON.stringify(values[key]);
+          }
+        }
+        data.push({
+          pageElemId: key,
+          value: finalValue,
+          storageId: elementsMap[key].storageId,
+        });
+      });
+
+      const response = yield call(saveVisaPage, { prjId, data });
+      if (response.code === 0) {
         message.success('保存成功');
       } else {
-        message.error('保存失败');
+        message.error(`保存失败:${response.msg}`);
       }
     },
   },

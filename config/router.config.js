@@ -27,22 +27,29 @@ export default [
       {
         path: '/visa',
         name: 'visa',
-        icon: 'visa',
+        icon: 'idcard',
         routes: [
+          {
+            path: '/visa',
+            redirect: '/visa/dashboard',
+          },
+          {
+            path: '/visa/dashboard',
+            name: 'dashboard',
+            component: './Visa/VisaList',
+          },
           {
             path: '/visa/applform/:id',
             name: 'applform',
             component: './Visa/ProjForm',
-          },
-          {
-            path: '/visa/visamng',
-            name: 'visamng',
-            component: './Visa/VisaList',
-          },
-          {
-            path: '/visa/visapage',
-            name: 'visapage',
-            component: './Visa/Page',
+            hideChildrenInMenu: true,
+            routes: [
+              {
+                path: '/visa/applform/:id/page/:pageId',
+                name: 'page',
+                component: './Visa/Page',
+              },
+            ],
           },
         ],
       },

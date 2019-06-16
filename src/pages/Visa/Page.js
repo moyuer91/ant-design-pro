@@ -13,29 +13,32 @@ import {
   PageHeader,
   Divider,
   // InputNumber,
+  Upload,
   Cascader,
   Radio,
   Icon,
   Tooltip,
+  message,
 } from 'antd';
 import styles from './style.less';
 import TableFormItem from './TableFormItem';
 
+const { TextArea } = Input;
 const { Paragraph } = Typography;
 const FormItem = Form.Item;
 
 const cascaDerOpitons = [
   {
     value: 'zhejiang',
-    label: 'Zhejiang',
+    label: '浙江',
     children: [
       {
         value: 'hangzhou',
-        label: 'Hangzhou',
+        label: '杭州',
         children: [
           {
-            value: 'xihu',
-            label: 'West Lake',
+            value: 'xihuqu',
+            label: '西湖区',
           },
         ],
       },
@@ -43,15 +46,15 @@ const cascaDerOpitons = [
   },
   {
     value: 'jiangsu',
-    label: 'Jiangsu',
+    label: '江苏',
     children: [
       {
         value: 'nanjing',
-        label: 'Nanjing',
+        label: '南京',
         children: [
           {
-            value: 'zhonghuamen',
-            label: 'Zhong Hua Men',
+            value: 'gulouqu',
+            label: '鼓楼区',
           },
         ],
       },
@@ -66,13 +69,16 @@ const cascaDerOpitons = [
 @Form.create()
 class Page extends PureComponent {
   componentDidMount() {
-    const { dispatch, id } = this.props;
-    dispatch({
-      type: 'visapage/fetch',
-      payload: {
-        pageId: id,
-      },
-    });
+    const { dispatch, id, onRef } = this.props;
+    onRef(this);
+    if (id !== -1) {
+      dispatch({
+        type: 'visapage/fetch',
+        payload: {
+          pageId: id,
+        },
+      });
+    }
   }
 
   handleSubmit = e => {
@@ -81,7 +87,7 @@ class Page extends PureComponent {
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         dispatch({
-          type: 'visapage/submitPage',
+          type: 'visapage/submit',
           payload: values,
         });
       }
@@ -89,20 +95,42 @@ class Page extends PureComponent {
   };
 
   handleSave = e => {
-    const { dispatch, form } = this.props;
-    e.preventDefault();
-    form.validateFieldsAndScroll((err, values) => {
-      if (!err) {
-        dispatch({
-          type: 'visapage/savePage',
-          payload: values,
-        });
+    const {
+      dispatch,
+      form,
+      projectId,
+      visapage: { elements },
+    } = this.props;
+    if (elements && elements.length > 0) {
+      const elementsMap = {};
+      elements.forEach(item => {
+        elementsMap[item.id] = item;
+      });
+      if (e) {
+        e.preventDefault();
       }
-    });
+
+      form.validateFieldsAndScroll((err, values) => {
+        if (!err) {
+          dispatch({
+            type: 'visapage/save',
+            payload: {
+              prjId: projectId,
+              values,
+              elementsMap,
+            },
+          });
+        }
+      });
+    }
   };
 
   render() {
     const {
+      handleNext,
+      handlePrevious,
+      hasNext,
+      hasPrevious,
       submitting,
       visapage: { pageName, descr, elements },
     } = this.props;
@@ -154,6 +182,17 @@ class Page extends PureComponent {
           initialValue: value,
           rules,
         })(<Input placeholder={placeholder} style={{ display }} />);
+      } else if (type === 2) {
+        elemItem = getFieldDecorator(id.toString(), {
+          initialValue: value,
+          rules,
+        })(
+          <TextArea
+            placeholder={placeholder}
+            style={{ display }}
+            autosize={{ minRows: 2, maxRows: 6 }}
+          />
+        );
       } else if (type === 6) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
@@ -168,12 +207,12 @@ class Page extends PureComponent {
         );
       } else if (type === 4) {
         elemItem = getFieldDecorator(id.toString(), {
-          initialValue: moment(value, 'YYYYMMDD'),
+          initialValue: value ? moment(value, 'YYYYMMDD') : null,
           rules,
         })(<DatePicker />);
       } else if (type === 5) {
         elemItem = getFieldDecorator(id.toString(), {
-          initialValue: moment(value, 'HHmmss'),
+          initialValue: value ? moment(value, 'HHmmss') : null,
           rules,
         })(<TimePicker />);
       } else if (type === 10) {
@@ -190,10 +229,40 @@ class Page extends PureComponent {
           </Select>
         );
       } else if (type === 11) {
+        const cascaDerValue = JSON.parse(value);
         elemItem = getFieldDecorator(id.toString(), {
-          initialValue: value,
+          initialValue: cascaDerValue,
           rules,
         })(<Cascader options={cascaDerOpitons} />);
+      } else if (type === 12) {
+        // 上传文件
+        const props = {
+          name: 'file',
+          action: '/visaservice/attachments',
+          headers: {
+            authorization: 'authorization-text',
+          },
+          onChange(info) {
+            if (info.file.status !== 'uploading') {
+              console.log(info.file, info.fileList);
+            }
+            if (info.file.status === 'done') {
+              message.success(`${info.file.name} file uploaded successfully`);
+            } else if (info.file.status === 'error') {
+              message.error(`${info.file.name} file upload failed.`);
+            }
+          },
+        };
+        elemItem = getFieldDecorator(id.toString(), {
+          initialValue: [],
+          rules,
+        })(
+          <Upload {...props}>
+            <Button>
+              <Icon type="upload" /> {label}
+            </Button>
+          </Upload>
+        );
       } else if (type === 20) {
         try {
           const columnsCfg = JSON.parse(script);
@@ -212,11 +281,11 @@ class Page extends PureComponent {
       }
 
       if (type === 20) {
-        return <FormItem key={elem.id}>{elemItem}</FormItem>;
+        return <FormItem key={id}>{elemItem}</FormItem>;
       }
       if (type === 3) {
         return (
-          <Card title={label} bordered={false}>
+          <Card key={`card_${id}`} title={label} bordered={false}>
             {tip && <Card.Meta description={tip} />}
           </Card>
         );
@@ -259,14 +328,36 @@ class Page extends PureComponent {
               <Button style={{ marginLeft: 8 }} onClick={this.handleSave}>
                 保存
               </Button>
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={submitting}
-                style={{ marginLeft: 8 }}
-              >
-                提交
-              </Button>
+              {hasPrevious && (
+                <Button
+                  type="primary"
+                  loading={submitting}
+                  style={{ marginLeft: 8 }}
+                  onClick={handlePrevious}
+                >
+                  上一页
+                </Button>
+              )}
+              {hasNext && (
+                <Button
+                  type="primary"
+                  loading={submitting}
+                  style={{ marginLeft: 8 }}
+                  onClick={handleNext}
+                >
+                  保存并下一页
+                </Button>
+              )}
+              {!hasNext && (
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={submitting}
+                  style={{ marginLeft: 8 }}
+                >
+                  提交
+                </Button>
+              )}
             </FormItem>
           </Form>
         </PageHeader>

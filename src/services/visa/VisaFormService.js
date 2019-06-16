@@ -7,13 +7,19 @@ export async function getVisaProject(params) {
   return request(`/visaservice/projects/${projectId}`);
 }
 
+export async function getVisaProjectPreview(params) {
+  const { projectId } = params;
+  console.log(`projectId:${projectId}`);
+  return request(`/visaservice/projects/${projectId}/preview`);
+}
+
 export async function getVisaPage(params) {
   const { pageId } = params;
   return request(`/visaservice/pages/${pageId}`);
 }
 
 export async function saveVisaPage(params) {
-  return request('/visaservice/pages', {
+  return request('/visaservice/pages/data', {
     method: 'POST',
     body: params,
   });
