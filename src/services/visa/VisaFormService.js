@@ -14,8 +14,8 @@ export async function getVisaProjectPreview(params) {
 }
 
 export async function getVisaPage(params) {
-  const { pageId } = params;
-  return request(`/visaservice/pages/${pageId}`);
+  const { pageId, projectId } = params;
+  return request(`/visaservice/projects/${projectId}/pages/${pageId}`);
 }
 
 export async function saveVisaPage(params) {

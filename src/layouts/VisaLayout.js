@@ -1,15 +1,12 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import { Layout } from 'antd';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import { ContainerQuery } from 'react-container-query';
 import classNames from 'classnames';
 import Media from 'react-media';
-import logo from '../assets/logo.svg';
 import Footer from './Footer';
-import Header from './Header';
 import Context from './MenuContext';
-import SiderMenu from '@/components/SiderMenu';
 import getPageTitle from '@/utils/getPageTitle';
 import styles from './BasicLayout.less';
 
@@ -98,43 +95,21 @@ class BasicLayout extends React.Component {
 
   render() {
     const {
-      navTheme,
-      layout: PropsLayout,
       children,
       location: { pathname },
-      isMobile,
-      menuData,
       breadcrumbNameMap,
       fixedHeader,
     } = this.props;
 
-    const isTop = PropsLayout === 'topmenu';
     const contentStyle = !fixedHeader ? { paddingTop: 0 } : {};
     const layout = (
       <Layout>
-        {isTop && !isMobile ? null : (
-          <SiderMenu
-            logo={logo}
-            theme={navTheme}
-            onCollapse={this.handleMenuCollapse}
-            menuData={menuData}
-            isMobile={isMobile}
-            {...this.props}
-          />
-        )}
         <Layout
           style={{
             ...this.getLayoutStyle(),
             minHeight: '100vh',
           }}
         >
-          <Header
-            menuData={menuData}
-            handleMenuCollapse={this.handleMenuCollapse}
-            logo={logo}
-            isMobile={isMobile}
-            {...this.props}
-          />
           <Content className={styles.content} style={contentStyle}>
             {children}
           </Content>
@@ -153,7 +128,6 @@ class BasicLayout extends React.Component {
             )}
           </ContainerQuery>
         </DocumentTitle>
-        <Suspense fallback={null}>{this.renderSettingDrawer()}</Suspense>
       </React.Fragment>
     );
   }

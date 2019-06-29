@@ -27,6 +27,13 @@ const { TextArea } = Input;
 const { Paragraph } = Typography;
 const FormItem = Form.Item;
 
+// 计算表达式的值
+function evil(fn) {
+  const Fn = Function; // 一个变量指向Function，防止有些前端编译工具报错
+  const result = new Fn(`return ${fn}`)();
+  return result;
+}
+
 const cascaDerOpitons = [
   {
     value: 'zhejiang',
@@ -69,12 +76,14 @@ const cascaDerOpitons = [
 @Form.create()
 class Page extends PureComponent {
   componentDidMount() {
-    const { dispatch, id, onRef } = this.props;
+    const { dispatch, id, projectId, onRef } = this.props;
+    // console.log("Page componentDidMount prjId:"+projectId+"   pageId:"+id);
     onRef(this);
     if (id !== -1) {
       dispatch({
         type: 'visapage/fetch',
         payload: {
+          projectId,
           pageId: id,
         },
       });
@@ -95,9 +104,11 @@ class Page extends PureComponent {
   };
 
   handleSave = e => {
+    let result = false;
     const {
       dispatch,
       form,
+      id,
       projectId,
       visapage: { elements },
     } = this.props;
@@ -116,13 +127,35 @@ class Page extends PureComponent {
             type: 'visapage/save',
             payload: {
               prjId: projectId,
+              pageId: id,
               values,
               elementsMap,
             },
           });
+          result = true;
         }
       });
     }
+    return result;
+  };
+
+  decideDisplayType = displayWhen => {
+    let display = 'block';
+    const {
+      form: { getFieldValue },
+    } = this.props;
+    const { ruleType, script } = displayWhen;
+    if (displayWhen) {
+      if (ruleType === 1) {
+        // 脚本形式进行判定
+        const result = evil(script)(displayWhen, { moment, getFieldValue });
+        display = result ? 'block' : 'none';
+      } else {
+        // 默认使用值相等的形式进行判定
+        display = getFieldValue(displayWhen.id) === displayWhen.value ? 'block' : 'none';
+      }
+    }
+    return display;
   };
 
   render() {
@@ -134,8 +167,9 @@ class Page extends PureComponent {
       submitting,
       visapage: { pageName, descr, elements },
     } = this.props;
+    // console.log("Page render projectId:"+projectId+"   pageId:"+id);
     const {
-      form: { getFieldDecorator, getFieldValue },
+      form: { getFieldDecorator },
     } = this.props;
     const submitFormLayout = {
       wrapperCol: {
@@ -150,8 +184,8 @@ class Page extends PureComponent {
       },
       wrapperCol: {
         xs: { span: 24 },
-        sm: { span: 12 },
-        md: { span: 10 },
+        sm: { span: 12, offset: 1 },
+        md: { span: 10, offset: 1 },
       },
     };
 
@@ -168,14 +202,11 @@ class Page extends PureComponent {
         script,
         placeholder,
       } = elem;
-      let display = 'block';
-      if (displayWhen !== null && displayWhen !== undefined) {
-        display = getFieldValue(displayWhen.id) === displayWhen.value ? 'block' : 'none';
-      }
+      const display = this.decideDisplayType(displayWhen);
       if (display === 'none') {
+        // 不显示则不渲染
         return null;
       }
-
       let elemItem = null;
       if (type === 1) {
         elemItem = getFieldDecorator(id.toString(), {
@@ -209,7 +240,7 @@ class Page extends PureComponent {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value ? moment(value, 'YYYYMMDD') : null,
           rules,
-        })(<DatePicker />);
+        })(<DatePicker style={{ display }} />);
       } else if (type === 5) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value ? moment(value, 'HHmmss') : null,
@@ -221,11 +252,12 @@ class Page extends PureComponent {
           rules,
         })(
           <Select>
-            {options.map(option => (
-              <Select.Option key={option.value} value={option.value}>
-                {option.label}
-              </Select.Option>
-            ))}
+            {options &&
+              options.map(option => (
+                <Select.Option key={option.value} value={option.value}>
+                  {option.label}
+                </Select.Option>
+              ))}
           </Select>
         );
       } else if (type === 11) {
@@ -244,7 +276,7 @@ class Page extends PureComponent {
           },
           onChange(info) {
             if (info.file.status !== 'uploading') {
-              console.log(info.file, info.fileList);
+              // console.log(info.file, info.fileList);
             }
             if (info.file.status === 'done') {
               message.success(`${info.file.name} file uploaded successfully`);
@@ -291,12 +323,14 @@ class Page extends PureComponent {
         );
       }
 
+      // const shortLabelLayout={span:}
+
       return (
         <FormItem
           key={elem.id}
           {...formItemLayout}
           label={
-            <span>
+            <span style={{ whiteSpace: 'normal' }}>
               {label}&nbsp;&nbsp;
               {tip && (
                 <em className={styles.optional}>

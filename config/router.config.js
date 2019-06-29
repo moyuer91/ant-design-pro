@@ -20,7 +20,7 @@ export default [
   // app
   {
     path: '/',
-    component: '../layouts/BasicLayout',
+    component: '../layouts/VisaLayout',
     Routes: ['src/pages/Authorized'],
     routes: [
       //visa

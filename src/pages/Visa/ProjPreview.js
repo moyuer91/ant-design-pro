@@ -19,8 +19,13 @@ class ProjPreview extends PureComponent {
     });
   }
 
+  renderLabel = label => {
+    return <span style={{ whiteSpace: 'normal' }}>{label}</span>;
+  };
+
   renderPage = page => {
     const { data } = page;
+    const descriptionLayout = { column: { xxl: 3, xl: 2, lg: 2, md: 2, sm: 1, xs: 1 } };
     let elements = [];
     const descriptionsList = [];
     for (let i = 0; i < data.length; i += 1) {
@@ -30,13 +35,9 @@ class ProjPreview extends PureComponent {
         // table uploader textarea 类型时，重新起一个Descriptions
         if (elements.length > 0) {
           descriptionsList.push(
-            <Descriptions
-              key={`descrs_${i - 1}`}
-              border
-              column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
-            >
+            <Descriptions key={`descrs_${i - 1}`} border {...descriptionLayout}>
               {elements.map(elem => (
-                <Descriptions.Item key={elem.pageElemId} label={elem.label}>
+                <Descriptions.Item key={elem.pageElemId} label={this.renderLabel(elem.label)}>
                   {elem.value}
                 </Descriptions.Item>
               ))}
@@ -64,24 +65,15 @@ class ProjPreview extends PureComponent {
         if (type === 2) {
           // text area作为单行插入
           descriptionsList.push(
-            <Descriptions
-              key={`descrs_${i}`}
-              border
-              column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
-            >
-              <Descriptions.Item label={label}>{value}</Descriptions.Item>
+            <Descriptions key={`descrs_${i}`} border {...descriptionLayout}>
+              <Descriptions.Item label={this.renderLabel(label)}>{value}</Descriptions.Item>
             </Descriptions>
           );
         }
         if (type === 3) {
           // 分隔符
           descriptionsList.push(
-            <Descriptions
-              key={`descrs_${i}`}
-              title={label}
-              border
-              column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
-            />
+            <Descriptions key={`descrs_${i}`} title={label} border {...descriptionLayout} />
           );
         }
       } else {
@@ -95,10 +87,10 @@ class ProjPreview extends PureComponent {
           key={`descrs_${data.length - 1}`}
           title={descriptionsList.length === 0 ? page.pageName : undefined}
           border
-          column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
+          {...descriptionLayout}
         >
           {elements.map(elem => (
-            <Descriptions.Item key={elem.pageElemId} label={elem.label}>
+            <Descriptions.Item key={elem.pageElemId} label={this.renderLabel(elem.label)}>
               {elem.value}
             </Descriptions.Item>
           ))}
@@ -121,8 +113,12 @@ class ProjPreview extends PureComponent {
       <div>
         <PageHeader
           title={`单号：${appOrderNo}`}
-          content={descr}
-          extraContent={`面签城市：${city}`}
+          content={
+            <div>
+              <p>{`面签城市：${city}`}</p>
+              <p>{descr}</p>
+            </div>
+          }
         />
         {pagesData.map(page => this.renderPage(page))}
       </div>

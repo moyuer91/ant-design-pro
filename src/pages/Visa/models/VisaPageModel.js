@@ -21,6 +21,7 @@ export default {
         try {
           elem.rules = elem.rules ? JSON.parse(elem.rules) : '';
           elem.options = elem.options ? JSON.parse(elem.options) : '';
+          elem.displayWhen = elem.displayWhen ? JSON.parse(elem.displayWhen) : '';
         } catch (e) {
           message.error(e.toString());
         }
@@ -31,7 +32,7 @@ export default {
       });
     },
     *save({ payload }, { call }) {
-      const { prjId, values, elementsMap } = payload;
+      const { pageId, prjId, values, elementsMap } = payload;
       const data = [];
       Object.keys(values).forEach(key => {
         let finalValue = values[key];
@@ -57,9 +58,16 @@ export default {
         });
       });
 
-      const response = yield call(saveVisaPage, { prjId, data });
+      const response = yield call(saveVisaPage, { id: pageId, prjId, data });
       if (response.code === 0) {
         message.success('保存成功');
+        // yield put({
+        //   type: 'fetch',
+        //   payload: {
+        //     projectId:prjId,
+        //     pageId,
+        //   },
+        // });
       } else {
         message.error(`保存失败:${response.msg}`);
       }

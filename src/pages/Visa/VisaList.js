@@ -116,6 +116,9 @@ class VisaList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
+      type: 'visaList/init',
+    });
+    dispatch({
       type: 'visaList/fetch',
     });
   }
@@ -214,11 +217,9 @@ class VisaList extends PureComponent {
     dispatch({
       type: 'visaList/add',
       payload: {
-        desc: fields.desc,
+        ...fields,
       },
     });
-
-    message.success('添加成功');
     this.handleModalVisible();
   };
 
@@ -314,7 +315,7 @@ class VisaList extends PureComponent {
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="状态">
-              {getFieldDecorator('type')(
+              {getFieldDecorator('Status')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
                   {statusItems}
                 </Select>

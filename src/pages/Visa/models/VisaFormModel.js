@@ -37,6 +37,7 @@ export default {
         payload: { ...project, activePageId, lastPageId, firstPageId },
       });
     },
+
     *submitForm({ payload }, { call }) {
       const response = yield call(submitVisaProject, payload);
       if (response.errorNo === '0') {

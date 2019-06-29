@@ -15,3 +15,10 @@ export async function getProjectList(params) {
 export async function getMngInitInfo(params) {
   return request(`/visaservice/mng_page/init_info?${stringify(params)}`);
 }
+
+export async function addProject(params) {
+  return request('/visaservice/projects', {
+    method: 'POST',
+    body: params,
+  });
+}
