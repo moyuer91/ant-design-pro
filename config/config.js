@@ -63,6 +63,9 @@ export default {
   plugins,
   define: {
     APP_TYPE: APP_TYPE || '',
+    'process.env': {
+      API_ENV: process.env.API_ENV, // 这里是重点吧，获取配置
+    },
   },
   treeShaking: true,
   targets: {

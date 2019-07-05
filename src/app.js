@@ -1,4 +1,4 @@
-import fetch from 'dva/fetch';
+// import fetch from 'dva/fetch';
 
 export const dva = {
   config: {
@@ -8,7 +8,7 @@ export const dva = {
   },
 };
 
-let authRoutes = {};
+const authRoutes = {};
 
 function ergodicRoutes(routes, authKey, authority) {
   routes.forEach(element => {
@@ -30,15 +30,16 @@ export function patchRoutes(routes) {
 }
 
 export function render(oldRender) {
-  fetch('/api/auth_routes')
-    .then(res => res.json())
-    .then(
-      ret => {
-        authRoutes = ret;
-        oldRender();
-      },
-      () => {
-        oldRender();
-      }
-    );
+  oldRender();
+  // fetch('/api/auth_routes')
+  //   .then(res => res.json())
+  //   .then(
+  //     ret => {
+  //       authRoutes = ret;
+  //       oldRender();
+  //     },
+  //     () => {
+  //       oldRender();
+  //     }
+  //   );
 }

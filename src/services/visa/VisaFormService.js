@@ -26,7 +26,8 @@ export async function saveVisaPage(params) {
 }
 
 export async function submitVisaProject(params) {
-  return request('/visaservice/projects', {
+  const { projectId } = params;
+  return request(`/visaservice/projects/${projectId}/application`, {
     method: 'POST',
     body: params,
   });

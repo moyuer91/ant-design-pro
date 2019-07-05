@@ -18,8 +18,10 @@ class ProjForm extends PureComponent {
 
   componentDidMount() {
     // console.log("projForm componentWillMount");
-    const { dispatch, match } = this.props;
-    const { params } = match;
+    const {
+      dispatch,
+      match: { params },
+    } = this.props;
     dispatch({
       type: 'visaform/fetch',
       payload: {
@@ -107,9 +109,25 @@ class ProjForm extends PureComponent {
     }
   };
 
+  // 提交
+  handleSubmit = e => {
+    const { dispatch, match } = this.props;
+    const { params } = match;
+    // todo 校验所有页面是否填写完整
+
+    e.preventDefault();
+    dispatch({
+      type: 'visaform/submit',
+      payload: {
+        projectId: params.id,
+      },
+    });
+  };
+
   render() {
     const {
-      visaform: { pages, activePageId, id, hasNext, hasPrevious, descr, city, appOrderNo },
+      visaform: { pages, activePageId, id, hasNext, hasPrevious, prjcfgDescr, city, appOrderNo },
+      location: { query },
     } = this.props;
     // console.log("projForm render id:"+id+"   activePageId:"+activePageId);
     const { drawerVisible } = this.state;
@@ -126,7 +144,7 @@ class ProjForm extends PureComponent {
           <Button type="primary" onClick={this.showDrawer}>
             预览
           </Button>
-          <Button>翻译</Button>
+          {query.isAdmin === 'true' && <Button>翻译</Button>}
         </ButtonGroup>
       </Fragment>
     );
@@ -138,7 +156,7 @@ class ProjForm extends PureComponent {
           content={
             <div>
               <p>{`面签城市：${city}`}</p>
-              <p>{descr}</p>
+              <p>{prjcfgDescr}</p>
             </div>
           }
           tabList={tabpanes}
@@ -156,6 +174,7 @@ class ProjForm extends PureComponent {
               onRef={this.onRef}
               handleNext={this.handleNext}
               handlePrevious={this.handlePrevious}
+              handleSubmit={this.handleSubmit}
             />
           </div>
         </Content>

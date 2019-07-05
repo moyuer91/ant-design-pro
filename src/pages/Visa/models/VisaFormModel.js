@@ -38,12 +38,12 @@ export default {
       });
     },
 
-    *submitForm({ payload }, { call }) {
+    *submit({ payload }, { call }) {
       const response = yield call(submitVisaProject, payload);
-      if (response.errorNo === '0') {
-        message.success('保存成功');
+      if (response.code === 0) {
+        message.success('提交成功');
       } else {
-        message.error('保存失败');
+        message.error('提交失败');
       }
     },
   },

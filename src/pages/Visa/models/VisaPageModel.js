@@ -50,6 +50,10 @@ export default {
           } else if (type === 11) {
             finalValue = JSON.stringify(values[key]);
           }
+          if (type === 9) {
+            // checkbox的数据需要序列化
+            finalValue = JSON.stringify(values[key]);
+          }
         }
         data.push({
           pageElemId: key,

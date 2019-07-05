@@ -18,10 +18,11 @@ export default [
     ],
   },
   // app
+  { path: '/', redirect: '/visa' },
   {
     path: '/',
     component: '../layouts/VisaLayout',
-    Routes: ['src/pages/Authorized'],
+    //Routes: ['src/pages/Authorized'],
     routes: [
       //visa
       {
@@ -54,7 +55,7 @@ export default [
         ],
       },
       // dashboard
-      { path: '/', redirect: '/dashboard/analysis', authority: ['admin', 'user'] },
+      // { path: '/', redirect: '/dashboard/analysis', authority: ['admin', 'user'] },
       {
         path: '/dashboard',
         name: 'dashboard',

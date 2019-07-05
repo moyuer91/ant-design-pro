@@ -10,9 +10,6 @@ import Context from './MenuContext';
 import getPageTitle from '@/utils/getPageTitle';
 import styles from './BasicLayout.less';
 
-// lazy load SettingDrawer
-const SettingDrawer = React.lazy(() => import('@/components/SettingDrawer'));
-
 const { Content } = Layout;
 
 const query = {
@@ -40,18 +37,12 @@ const query = {
   },
 };
 
-class BasicLayout extends React.Component {
+class VisaLayout extends React.Component {
   componentDidMount() {
     const {
       dispatch,
       route: { routes, path, authority },
     } = this.props;
-    dispatch({
-      type: 'user/fetchCurrent',
-    });
-    dispatch({
-      type: 'setting/getSetting',
-    });
     dispatch({
       type: 'menu/getMenuData',
       payload: { routes, path, authority },
@@ -74,23 +65,6 @@ class BasicLayout extends React.Component {
       };
     }
     return null;
-  };
-
-  handleMenuCollapse = collapsed => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'global/changeLayoutCollapsed',
-      payload: collapsed,
-    });
-  };
-
-  renderSettingDrawer = () => {
-    // Do not render SettingDrawer in production
-    // unless it is deployed in preview.pro.ant.design as demo
-    if (process.env.NODE_ENV === 'production' && APP_TYPE !== 'site') {
-      return null;
-    }
-    return <SettingDrawer />;
   };
 
   render() {
@@ -141,6 +115,6 @@ export default connect(({ global, setting, menu: menuModel }) => ({
   ...setting,
 }))(props => (
   <Media query="(max-width: 599px)">
-    {isMobile => <BasicLayout {...props} isMobile={isMobile} />}
+    {isMobile => <VisaLayout {...props} isMobile={isMobile} />}
   </Media>
 ));

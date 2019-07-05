@@ -12,6 +12,7 @@ import {
   Card,
   PageHeader,
   Divider,
+  Checkbox,
   // InputNumber,
   Upload,
   Cascader,
@@ -20,6 +21,7 @@ import {
   Tooltip,
   message,
 } from 'antd';
+import env from '@/env';
 import styles from './style.less';
 import TableFormItem from './TableFormItem';
 
@@ -158,15 +160,64 @@ class Page extends PureComponent {
     return display;
   };
 
+  getOptionData = options => {
+    const { data, relId } = options;
+    const { getFieldValue } = this.props;
+    let optionData = [];
+    if (options.type === 'cascade') {
+      const relValue = getFieldValue(relId);
+      optionData = relValue ? data[relValue] : [];
+    } else {
+      optionData = data;
+    }
+    return optionData;
+  };
+
+  getRules = (rules, type, label) => {
+    if (rules.required === true && (rules.message === null || rules.message === undefined)) {
+      let msg;
+      if (type === 1) {
+        msg = `请输入${label}`;
+      }
+      if (type === 10) {
+        msg = `请选择${label}`;
+      }
+      return { ...rules, message: msg };
+    }
+
+    return rules;
+  };
+
+  renderLabel = (label, tip) => {
+    return (
+      <span style={{ whiteSpace: 'normal' }}>
+        {label}&nbsp;&nbsp;
+        {tip && (
+          <em className={styles.optional}>
+            <Tooltip title={tip}>
+              <Icon
+                type="question-circle"
+                theme="filled"
+                style={{ marginRight: 4, color: '#08c' }}
+              />
+            </Tooltip>
+          </em>
+        )}
+      </span>
+    );
+  };
+
   render() {
     const {
       handleNext,
       handlePrevious,
       hasNext,
+      handleSubmit,
       hasPrevious,
       submitting,
       visapage: { pageName, descr, elements },
     } = this.props;
+    const token = ''; // todo 获取前端token
     // console.log("Page render projectId:"+projectId+"   pageId:"+id);
     const {
       form: { getFieldDecorator },
@@ -192,6 +243,7 @@ class Page extends PureComponent {
     const formItems = elements.map(elem => {
       const {
         id,
+        projectId,
         type,
         label,
         value,
@@ -211,12 +263,12 @@ class Page extends PureComponent {
       if (type === 1) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
-          rules,
+          rules: this.getRules(rules, type, label),
         })(<Input placeholder={placeholder} style={{ display }} />);
       } else if (type === 2) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
-          rules,
+          rules: this.getRules(rules, type, label),
         })(
           <TextArea
             placeholder={placeholder}
@@ -224,36 +276,42 @@ class Page extends PureComponent {
             autosize={{ minRows: 2, maxRows: 6 }}
           />
         );
+      } else if (type === 4) {
+        elemItem = getFieldDecorator(id.toString(), {
+          initialValue: value ? moment(value, 'YYYYMMDD') : null,
+          rules: this.getRules(rules, type, label),
+        })(<DatePicker style={{ display }} />);
+      } else if (type === 5) {
+        elemItem = getFieldDecorator(id.toString(), {
+          initialValue: value ? moment(value, 'HHmmss') : null,
+          rules: this.getRules(rules, type, label),
+        })(<TimePicker />);
       } else if (type === 6) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
-          rules,
+          rules: this.getRules(rules, type, label),
         })(
           <Radio.Group
-            options={options}
+            options={options.data}
             style={{
               display,
             }}
           />
         );
-      } else if (type === 4) {
+      } else if (type === 9) {
         elemItem = getFieldDecorator(id.toString(), {
-          initialValue: value ? moment(value, 'YYYYMMDD') : null,
-          rules,
-        })(<DatePicker style={{ display }} />);
-      } else if (type === 5) {
-        elemItem = getFieldDecorator(id.toString(), {
-          initialValue: value ? moment(value, 'HHmmss') : null,
-          rules,
-        })(<TimePicker />);
+          initialValue: JSON.parse(value) || [],
+          rules: this.getRules(rules, type, label),
+        })(<Checkbox.Group options={options.data} />);
       } else if (type === 10) {
+        const optionData = this.getOptionData(options);
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
-          rules,
+          rules: this.getRules(rules, type, label),
         })(
           <Select>
-            {options &&
-              options.map(option => (
+            {optionData &&
+              optionData.map(option => (
                 <Select.Option key={option.value} value={option.value}>
                   {option.label}
                 </Select.Option>
@@ -264,30 +322,31 @@ class Page extends PureComponent {
         const cascaDerValue = JSON.parse(value);
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: cascaDerValue,
-          rules,
+          rules: this.getRules(rules, type, label),
         })(<Cascader options={cascaDerOpitons} />);
       } else if (type === 12) {
         // 上传文件
         const props = {
           name: 'file',
-          action: '/visaservice/attachments',
+          action: env.UPLOAD_URL,
           headers: {
-            authorization: 'authorization-text',
+            DM_AUTH: token,
           },
+          data: { basePath: projectId },
           onChange(info) {
             if (info.file.status !== 'uploading') {
               // console.log(info.file, info.fileList);
             }
             if (info.file.status === 'done') {
-              message.success(`${info.file.name} file uploaded successfully`);
+              message.success(`${info.file.name} 文件上传成功`);
             } else if (info.file.status === 'error') {
-              message.error(`${info.file.name} file upload failed.`);
+              message.error(`${info.file.name} 文件上传失败.`);
             }
           },
         };
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: [],
-          rules,
+          rules: this.getRules(rules, type, label),
         })(
           <Upload {...props}>
             <Button>
@@ -295,6 +354,15 @@ class Page extends PureComponent {
             </Button>
           </Upload>
         );
+      } else if (type === 13) {
+        try {
+          elemItem = getFieldDecorator('file picker', {
+            initialValue: '',
+          })(<Input type="file" />);
+        } catch (e) {
+          console.log(e.toString());
+          // throw new Error('invalid elem prop', e);
+        }
       } else if (type === 20) {
         try {
           const columnsCfg = JSON.parse(script);
@@ -304,7 +372,7 @@ class Page extends PureComponent {
               tableData,
               columnsCfg,
             },
-            rules,
+            rules: this.getRules(rules, type, label),
           })(<TableFormItem />);
         } catch (e) {
           console.log(e.toString());
@@ -326,26 +394,7 @@ class Page extends PureComponent {
       // const shortLabelLayout={span:}
 
       return (
-        <FormItem
-          key={elem.id}
-          {...formItemLayout}
-          label={
-            <span style={{ whiteSpace: 'normal' }}>
-              {label}&nbsp;&nbsp;
-              {tip && (
-                <em className={styles.optional}>
-                  <Tooltip title={tip}>
-                    <Icon
-                      type="question-circle"
-                      theme="filled"
-                      style={{ marginRight: 4, color: '#08c' }}
-                    />
-                  </Tooltip>
-                </em>
-              )}
-            </span>
-          }
-        >
+        <FormItem key={elem.id} {...formItemLayout} label={this.renderLabel(label, tip)}>
           {elemItem}
         </FormItem>
       );
@@ -388,6 +437,7 @@ class Page extends PureComponent {
                   htmlType="submit"
                   loading={submitting}
                   style={{ marginLeft: 8 }}
+                  onClick={handleSubmit}
                 >
                   提交
                 </Button>
