@@ -162,7 +162,9 @@ class Page extends PureComponent {
 
   getOptionData = options => {
     const { data, relId } = options;
-    const { getFieldValue } = this.props;
+    const {
+      form: { getFieldValue },
+    } = this.props;
     let optionData = [];
     if (options.type === 'cascade') {
       const relValue = getFieldValue(relId);
@@ -171,21 +173,6 @@ class Page extends PureComponent {
       optionData = data;
     }
     return optionData;
-  };
-
-  getRules = (rules, type, label) => {
-    if (rules.required === true && (rules.message === null || rules.message === undefined)) {
-      let msg;
-      if (type === 1) {
-        msg = `请输入${label}`;
-      }
-      if (type === 10) {
-        msg = `请选择${label}`;
-      }
-      return { ...rules, message: msg };
-    }
-
-    return rules;
   };
 
   renderLabel = (label, tip) => {
@@ -263,12 +250,12 @@ class Page extends PureComponent {
       if (type === 1) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
-          rules: this.getRules(rules, type, label),
+          rules,
         })(<Input placeholder={placeholder} style={{ display }} />);
       } else if (type === 2) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
-          rules: this.getRules(rules, type, label),
+          rules,
         })(
           <TextArea
             placeholder={placeholder}
@@ -279,17 +266,17 @@ class Page extends PureComponent {
       } else if (type === 4) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value ? moment(value, 'YYYYMMDD') : null,
-          rules: this.getRules(rules, type, label),
+          rules,
         })(<DatePicker style={{ display }} />);
       } else if (type === 5) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value ? moment(value, 'HHmmss') : null,
-          rules: this.getRules(rules, type, label),
+          rules,
         })(<TimePicker />);
       } else if (type === 6) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
-          rules: this.getRules(rules, type, label),
+          rules,
         })(
           <Radio.Group
             options={options.data}
@@ -301,13 +288,13 @@ class Page extends PureComponent {
       } else if (type === 9) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: JSON.parse(value) || [],
-          rules: this.getRules(rules, type, label),
+          rules,
         })(<Checkbox.Group options={options.data} />);
       } else if (type === 10) {
         const optionData = this.getOptionData(options);
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
-          rules: this.getRules(rules, type, label),
+          rules,
         })(
           <Select>
             {optionData &&
@@ -322,7 +309,7 @@ class Page extends PureComponent {
         const cascaDerValue = JSON.parse(value);
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: cascaDerValue,
-          rules: this.getRules(rules, type, label),
+          rules,
         })(<Cascader options={cascaDerOpitons} />);
       } else if (type === 12) {
         // 上传文件
@@ -346,7 +333,7 @@ class Page extends PureComponent {
         };
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: [],
-          rules: this.getRules(rules, type, label),
+          rules,
         })(
           <Upload {...props}>
             <Button>
@@ -372,7 +359,7 @@ class Page extends PureComponent {
               tableData,
               columnsCfg,
             },
-            rules: this.getRules(rules, type, label),
+            rules,
           })(<TableFormItem />);
         } catch (e) {
           console.log(e.toString());

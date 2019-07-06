@@ -1,4 +1,4 @@
-import { message } from 'antd/lib/index';
+import { routerRedux } from 'dva/router';
 import { getVisaProject, submitVisaProject } from '../../../services/visa/VisaFormService';
 import { getCheckedData } from '@/utils/VisaUtils';
 
@@ -38,13 +38,19 @@ export default {
       });
     },
 
-    *submit({ payload }, { call }) {
+    *submit({ payload }, { call, put, select }) {
       const response = yield call(submitVisaProject, payload);
-      if (response.code === 0) {
-        message.success('提交成功');
-      } else {
-        message.error('提交失败');
-      }
+      const { appOrderNo, applicant } = yield select(state => state.visaform);
+      yield put(
+        routerRedux.push(
+          response.code === 0
+            ? {
+                pathname: '/visa/result/success',
+                query: { appOrderNo, applicant },
+              }
+            : '/visa/result/error'
+        )
+      );
     },
   },
 
@@ -56,9 +62,21 @@ export default {
       };
     },
     switchTab(state, action) {
+      const { activePageId: nextActivePageId, finished } = action.payload;
+      const newPages = [...state.pages];
+      if (finished) {
+        for (let i = 0; i < newPages.length; i += 1) {
+          // 将当前页面的finished状态修改为true
+          if (newPages[i].id === state.activePageId) {
+            newPages[i].finished = true;
+            break;
+          }
+        }
+      }
       return {
         ...state,
-        ...action.payload,
+        pages: newPages,
+        activePageId: nextActivePageId,
         hasNext: !(action.payload.activePageId === state.lastPageId),
         hasPrevious: !(action.payload.activePageId === state.firstPageId),
       };

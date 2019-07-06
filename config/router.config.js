@@ -43,7 +43,6 @@ export default [
             path: '/visa/applform/:id',
             name: 'applform',
             component: './Visa/ProjForm',
-            hideChildrenInMenu: true,
             routes: [
               {
                 path: '/visa/applform/:id/page/:pageId',
@@ -51,6 +50,16 @@ export default [
                 component: './Visa/Page',
               },
             ],
+          },
+          {
+            path: '/visa/result/success',
+            name: 'applysuccess',
+            component: './Visa/Success',
+          },
+          {
+            path: '/visa/result/error',
+            name: 'applyerror',
+            component: './Visa/Error',
           },
         ],
       },

@@ -9,8 +9,8 @@ module.exports = {
   menu: {
     disableLocal: false,
   },
-  // title: '达美旅行',
-  title: 'ant design pro',
+  title: '达美旅行',
+  // title: 'ant design pro',
   pwa: true,
   // Your custom iconfont Symbol script Url
   // eg：//at.alicdn.com/t/font_1039637_btcrd5co4w.js

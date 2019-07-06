@@ -52,6 +52,7 @@ class ProjForm extends PureComponent {
 
   onSwitch = tabId => {
     const { dispatch } = this.props;
+    let finished = false;
     if (!this.curPage.handleSave()) {
       Modal.confirm({
         title: '填写错误或未完成',
@@ -69,10 +70,12 @@ class ProjForm extends PureComponent {
       });
       return;
     }
+    finished = true;
     dispatch({
       type: 'visaform/switchTab',
       payload: {
         activePageId: parseInt(tabId, 10),
+        finished,
       },
     });
   };
@@ -111,10 +114,22 @@ class ProjForm extends PureComponent {
 
   // 提交
   handleSubmit = e => {
-    const { dispatch, match } = this.props;
+    const {
+      dispatch,
+      match,
+      visaform: { pages },
+    } = this.props;
     const { params } = match;
-    // todo 校验所有页面是否填写完整
-
+    // 校验所有页面是否填写完整
+    for (let i = 0; i < pages.length; i += 1) {
+      if (!pages[i].finished) {
+        Modal.error({
+          title: '申请表没有填写完成，请补充完整后再提交！',
+          content: `「${pages[i].pageName}」页尚未填写完整`,
+        });
+        return;
+      }
+    }
     e.preventDefault();
     dispatch({
       type: 'visaform/submit',
@@ -135,7 +150,7 @@ class ProjForm extends PureComponent {
     const tabpanes = pages.map(page => {
       return {
         key: page.id,
-        tab: <span>{page.pageName}</span>,
+        tab: <span>{`${page.pageName}${page.finished ? '（已完成）' : ''}`}</span>,
       };
     });
     const action = (
@@ -153,6 +168,7 @@ class ProjForm extends PureComponent {
         <PageHeaderWrapper
           title={`单号：${appOrderNo}`}
           action={action}
+          hiddenBreadcrumb
           content={
             <div>
               <p>{`面签城市：${city}`}</p>

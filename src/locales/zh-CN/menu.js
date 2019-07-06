@@ -9,6 +9,8 @@ export default {
   'menu.dashboard.workplace': '工作台',
   'menu.visa': '签证申请管理',
   'menu.visa.applform': '签证申请',
+  'menu.visa.applysuccess': '申请结果',
+  'menu.visa.applyerror': '申请结果',
   'menu.visa.dashboard': '申请信息管理',
   'menu.visa.applform.page': '申请明细页',
   'menu.form': '表单页',
