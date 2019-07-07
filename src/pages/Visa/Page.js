@@ -24,6 +24,7 @@ import {
 import env from '@/env';
 import styles from './style.less';
 import TableFormItem from './TableFormItem';
+import PassportUpload from './components/PassportUpload';
 
 const { TextArea } = Input;
 const { Paragraph } = Typography;
@@ -161,14 +162,14 @@ class Page extends PureComponent {
   };
 
   getOptionData = options => {
-    const { data, relId } = options;
+    const { data, relId, cascadeData } = options;
     const {
       form: { getFieldValue },
     } = this.props;
     let optionData = [];
     if (options.type === 'cascade') {
       const relValue = getFieldValue(relId);
-      optionData = relValue ? data[relValue] : [];
+      optionData = relValue ? cascadeData[relValue] : [];
     } else {
       optionData = data;
     }
@@ -207,7 +208,7 @@ class Page extends PureComponent {
     const token = ''; // todo 获取前端token
     // console.log("Page render projectId:"+projectId+"   pageId:"+id);
     const {
-      form: { getFieldDecorator },
+      form: { getFieldDecorator, setFieldsValue },
     } = this.props;
     const submitFormLayout = {
       wrapperCol: {
@@ -342,14 +343,31 @@ class Page extends PureComponent {
           </Upload>
         );
       } else if (type === 13) {
-        try {
-          elemItem = getFieldDecorator('file picker', {
-            initialValue: '',
-          })(<Input type="file" />);
-        } catch (e) {
-          console.log(e.toString());
-          // throw new Error('invalid elem prop', e);
-        }
+        // 上传护照控件
+        const mapRule = script ? JSON.parse(script) : {};
+        const initFileList = JSON.parse(value);
+        const newValues = {};
+        const props = {
+          listType: 'picture-card',
+          action: env.UPLOAD_URL,
+          headers: {
+            DM_AUTH: token,
+          },
+          mapResultToForm: data => {
+            if (data) {
+              Object.keys(data).forEach(key => {
+                newValues[mapRule[key]] = data[key];
+              });
+              setFieldsValue(newValues);
+            }
+          },
+          data: { basePath: projectId },
+          max: 1,
+        };
+        elemItem = getFieldDecorator(id.toString(), {
+          initialValue: initFileList || [],
+          rules,
+        })(<PassportUpload {...props} />);
       } else if (type === 20) {
         try {
           const columnsCfg = JSON.parse(script);

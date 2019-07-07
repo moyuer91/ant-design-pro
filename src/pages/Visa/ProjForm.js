@@ -200,6 +200,8 @@ class ProjForm extends PureComponent {
           placement="right"
           onClose={this.onDrawerClose}
           visible={drawerVisible}
+          keyboard
+          destroyOnClose
         >
           <ProjPreview id={id} />
         </Drawer>

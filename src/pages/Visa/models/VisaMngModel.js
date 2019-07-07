@@ -1,5 +1,5 @@
 import { getProjectList, getMngInitInfo, addProject } from '@/services/visa/VisaMngService';
-import { getCheckedData } from '@/utils/VisaUtils';
+import { getCheckedData, isSuccessful } from '@/utils/VisaUtils';
 import { message } from 'antd/lib/index';
 
 export default {
@@ -39,7 +39,7 @@ export default {
 
     *add({ payload }, { call, put }) {
       const response = yield call(addProject, payload);
-      if (response.code === 0) {
+      if (isSuccessful(response)) {
         message.success('新增签证申请成功');
       } else {
         message.error(`新增签证申请失败:${response.msg}`);

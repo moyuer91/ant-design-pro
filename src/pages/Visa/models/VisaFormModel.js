@@ -1,6 +1,6 @@
 import { routerRedux } from 'dva/router';
 import { getVisaProject, submitVisaProject } from '../../../services/visa/VisaFormService';
-import { getCheckedData } from '@/utils/VisaUtils';
+import { getCheckedData, isSuccessful } from '@/utils/VisaUtils';
 
 export default {
   namespace: 'visaform',
@@ -43,7 +43,7 @@ export default {
       const { appOrderNo, applicant } = yield select(state => state.visaform);
       yield put(
         routerRedux.push(
-          response.code === 0
+          isSuccessful(response)
             ? {
                 pathname: '/visa/result/success',
                 query: { appOrderNo, applicant },

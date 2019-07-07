@@ -1,6 +1,6 @@
 import { message } from 'antd/lib/index';
 import { getVisaPage, saveVisaPage } from '../../../services/visa/VisaFormService';
-import { getCheckedData } from '@/utils/VisaUtils';
+import { getCheckedData, isSuccessful } from '@/utils/VisaUtils';
 
 export default {
   namespace: 'visapage',
@@ -49,9 +49,10 @@ export default {
             finalValue = values[key].format('HHmmss');
           } else if (type === 11) {
             finalValue = JSON.stringify(values[key]);
-          }
-          if (type === 9) {
+          } else if (type === 9) {
             // checkbox的数据需要序列化
+            finalValue = JSON.stringify(values[key]);
+          } else if (type === 13) {
             finalValue = JSON.stringify(values[key]);
           }
         }
@@ -63,7 +64,7 @@ export default {
       });
 
       const response = yield call(saveVisaPage, { id: pageId, prjId, data });
-      if (response.code === 0) {
+      if (isSuccessful(response)) {
         message.success('保存成功');
         // yield put({
         //   type: 'fetch',

@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Button, Card } from 'antd';
 import Result from '@/components/Result';
-import { routerRedux } from 'dva/router';
+import router from 'umi/router';
 
 class Error extends PureComponent {
   render() {
@@ -13,7 +13,7 @@ class Error extends PureComponent {
       <Button
         type="primary"
         onClick={() => {
-          routerRedux.push(`/visa/applform/${id}`);
+          router.push(`/visa/applform/${id}`);
         }}
       >
         返回修改
