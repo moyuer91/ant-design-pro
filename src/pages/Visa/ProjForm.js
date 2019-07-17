@@ -1,10 +1,11 @@
 import React, { PureComponent, Fragment } from 'react';
-import { Layout, Button, Drawer, Modal } from 'antd';
+import { Layout, Button, Drawer, Modal, message } from 'antd';
 import { connect } from 'dva';
 import Page from './Page';
 import ProjPreview from './ProjPreview';
 
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
+import { setToken } from '@/utils/authority';
 
 const { Content } = Layout;
 
@@ -21,7 +22,10 @@ class ProjForm extends PureComponent {
     const {
       dispatch,
       match: { params },
+      location: { query },
     } = this.props;
+    // 保存token
+    setToken(query.token);
     dispatch({
       type: 'visaform/fetch',
       payload: {
@@ -48,7 +52,29 @@ class ProjForm extends PureComponent {
   };
 
   // 翻译
-  handleTranslate = () => {};
+  handleTranslate = () => {
+    const {
+      dispatch,
+      match: { params },
+    } = this.props;
+
+    dispatch({
+      type: 'visaform/translate',
+      payload: {
+        projectId: params.id,
+      },
+      callback: result => {
+        if (result) {
+          message.success('申请单翻译成功！');
+          this.setState({
+            drawerVisible: true,
+          });
+        } else {
+          message.error('申请单翻译失败，请联系管理员！');
+        }
+      },
+    });
+  };
 
   onSwitch = tabId => {
     const { dispatch } = this.props;
@@ -159,7 +185,7 @@ class ProjForm extends PureComponent {
           <Button type="primary" onClick={this.showDrawer}>
             预览
           </Button>
-          {query.isAdmin === 'true' && <Button>翻译</Button>}
+          {query.showTranslate === 'true' && <Button onClick={this.handleTranslate}>翻译</Button>}
         </ButtonGroup>
       </Fragment>
     );

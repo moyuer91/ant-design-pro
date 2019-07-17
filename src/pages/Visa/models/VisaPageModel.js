@@ -52,6 +52,16 @@ export default {
           } else if (type === 9) {
             // checkbox的数据需要序列化
             finalValue = JSON.stringify(values[key]);
+          } else if (type === 12) {
+            // uploader的数据需要序列化
+            const fileList = values[key];
+            const saveFileList = fileList.map(item => ({
+              uid: item.uid,
+              name: item.name,
+              status: item.status,
+              url: item.url,
+            }));
+            finalValue = JSON.stringify(saveFileList);
           } else if (type === 13) {
             finalValue = JSON.stringify(values[key]);
           }

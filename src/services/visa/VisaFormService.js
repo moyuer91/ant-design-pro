@@ -32,3 +32,11 @@ export async function submitVisaProject(params) {
     body: params,
   });
 }
+
+export async function translate(params) {
+  const { projectId } = params;
+  return request(`/visaservice/projects/${projectId}/translation`, {
+    method: 'POST',
+    body: params,
+  });
+}

@@ -21,7 +21,7 @@ import {
   Tooltip,
   message,
 } from 'antd';
-import env from '@/env';
+import { getToken } from '@/utils/authority';
 import styles from './style.less';
 import TableFormItem from './TableFormItem';
 import PassportUpload from './components/PassportUpload';
@@ -205,7 +205,7 @@ class Page extends PureComponent {
       submitting,
       visapage: { pageName, descr, elements },
     } = this.props;
-    const token = ''; // todo 获取前端token
+    const token = getToken();
     // console.log("Page render projectId:"+projectId+"   pageId:"+id);
     const {
       form: { getFieldDecorator, setFieldsValue },
@@ -314,9 +314,10 @@ class Page extends PureComponent {
         })(<Cascader options={cascaDerOpitons} />);
       } else if (type === 12) {
         // 上传文件
+        const initFileList = JSON.parse(value);
         const props = {
           name: 'file',
-          action: env.UPLOAD_URL,
+          action: '/VISACENTER-PROGRAM/ossUpload/save',
           headers: {
             DM_AUTH: token,
           },
@@ -327,13 +328,35 @@ class Page extends PureComponent {
             }
             if (info.file.status === 'done') {
               message.success(`${info.file.name} 文件上传成功`);
+              const { fileList, file } = info;
+              const { response } = file;
+              fileList.map(item => {
+                if (item.uid === file.uid) {
+                  // eslint-disable-next-line
+                  item.url = response.data;
+                }
+                return item;
+              });
+              // eslint-disable-next-line
+              info.file.url = response.data;
             } else if (info.file.status === 'error') {
               message.error(`${info.file.name} 文件上传失败.`);
             }
           },
+          beforeUpload(file) {
+            const isLt1M = file.size / 1024 / 1024 < 1;
+            if (!isLt1M) {
+              message.error('文件大小不能超过1M!');
+            }
+            return isLt1M;
+          },
         };
         elemItem = getFieldDecorator(id.toString(), {
-          initialValue: [],
+          valuePropName: 'defaultFileList',
+          initialValue: initFileList || [],
+          getValueFromEvent: ({ fileList }) => {
+            return [...fileList] || [];
+          },
           rules,
         })(
           <Upload {...props}>
@@ -349,7 +372,7 @@ class Page extends PureComponent {
         const newValues = {};
         const props = {
           listType: 'picture-card',
-          action: env.UPLOAD_URL,
+          action: '/ERP/visitor/loadPassportInfo',
           headers: {
             DM_AUTH: token,
           },

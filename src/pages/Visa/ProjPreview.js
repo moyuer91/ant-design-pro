@@ -30,7 +30,7 @@ class ProjPreview extends PureComponent {
     const descriptionsList = [];
     for (let i = 0; i < data.length; i += 1) {
       const item = data[i];
-      const { type, label, value, script } = item;
+      const { type, label, value, engValue, script } = item;
       if (type === 20 || type === 2 || type === 12 || type === 3) {
         // table uploader textarea 类型时，重新起一个Descriptions
         if (elements.length > 0) {
@@ -38,7 +38,7 @@ class ProjPreview extends PureComponent {
             <Descriptions key={`descrs_${i - 1}`} border {...descriptionLayout}>
               {elements.map(elem => (
                 <Descriptions.Item key={elem.pageElemId} label={this.renderLabel(elem.label)}>
-                  {elem.value}
+                  {`${elem.value}${elem.engValue ? `(${elem.engValue})` : ''}`}
                 </Descriptions.Item>
               ))}
             </Descriptions>
@@ -66,7 +66,9 @@ class ProjPreview extends PureComponent {
           // text area作为单行插入
           descriptionsList.push(
             <Descriptions key={`descrs_${i}`} border {...descriptionLayout}>
-              <Descriptions.Item label={this.renderLabel(label)}>{value}</Descriptions.Item>
+              <Descriptions.Item label={this.renderLabel(label)}>
+                {`${value}${engValue ? `(${engValue})` : ''}`}
+              </Descriptions.Item>
             </Descriptions>
           );
         }
@@ -91,7 +93,7 @@ class ProjPreview extends PureComponent {
         >
           {elements.map(elem => (
             <Descriptions.Item key={elem.pageElemId} label={this.renderLabel(elem.label)}>
-              {elem.value}
+              {`${elem.value}${elem.engValue ? `(${elem.engValue})` : ''}`}
             </Descriptions.Item>
           ))}
         </Descriptions>

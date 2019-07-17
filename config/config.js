@@ -90,6 +90,22 @@ export default {
       target: 'http://127.0.0.1:8801/',
       changeOrigin: true,
     },
+    '/VISACENTER-PROGRAM': {
+      target: 'https://service.dameiweb.com/',
+      changeOrigin: true,
+    },
+    '/ERP': {
+      target: 'https://service.dameiweb.com/',
+      changeOrigin: true,
+    },
+    '/MT': {
+      target: 'https://service.dameiweb.com/',
+      changeOrigin: true,
+    },
+    '/AUTH': {
+      target: 'https://service.dameiweb.com/',
+      changeOrigin: true,
+    },
   },
   ignoreMomentLocale: true,
   lessLoaderOptions: {

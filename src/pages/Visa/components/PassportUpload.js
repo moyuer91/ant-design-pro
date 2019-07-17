@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react';
-import { Upload, Icon, Button } from 'antd';
+import { Upload, Icon, Button, message } from 'antd';
 import moment from 'moment';
 import { getCheckedData } from '@/utils/VisaUtils';
+import { getToken } from '@/utils/authority';
 
 class PassportUpload extends PureComponent {
   constructor(props) {
@@ -17,11 +18,23 @@ class PassportUpload extends PureComponent {
     const { onChange, mapResultToForm } = this.props;
 
     if (file.response) {
-      const checkData = getCheckedData(file.response);
-      checkData.birth_date = moment(checkData.birth_date, 'YYYYMMDD');
-      checkData.issue_date = moment(checkData.issue_date, 'YYYYMMDD');
-      checkData.expiry_date = moment(checkData.expiry_date, 'YYYYMMDD');
-      mapResultToForm(checkData);
+      try {
+        const checkData = JSON.parse(getCheckedData(file.response));
+        if (checkData) {
+          checkData.birth_date = checkData.birth_date
+            ? moment(checkData.birth_date, 'YYYYMMDD')
+            : null;
+          checkData.issue_date = checkData.issue_date
+            ? moment(checkData.issue_date, 'YYYYMMDD')
+            : null;
+          checkData.expiry_date = checkData.expiry_date
+            ? moment(checkData.expiry_date, 'YYYYMMDD')
+            : null;
+          mapResultToForm(checkData);
+        }
+      } catch (e) {
+        message.error('无法识别护照，请手动录入信息');
+      }
     }
 
     // const newValue=fileList.map(item=>({
@@ -41,7 +54,7 @@ class PassportUpload extends PureComponent {
   };
 
   render() {
-    const { max } = this.props;
+    const { max, action } = this.props;
     const { value } = this.state;
     const uploadButton = (
       <Button>
@@ -51,9 +64,12 @@ class PassportUpload extends PureComponent {
     return (
       <div className="clearfix">
         <Upload
-          action="/visaservice/loadPassportInfo"
+          action={action}
           listType="text"
           fileList={value}
+          headers={{
+            DM_AUTH: getToken(),
+          }}
           onChange={this.handleChange}
         >
           {value.length >= max ? null : uploadButton}

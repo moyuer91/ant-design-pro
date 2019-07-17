@@ -1,22 +1,22 @@
 const configs = {
   // 测试环境
   test: {
-    UPLOAD_URL: 'https://service.dameiweb.com/VISA-CENTER/ossUpload/save',
+    UPLOAD_URL: 'https://service.dameiweb.com/VISACENTER-PROGRAM/ossUpload/save',
   },
 
   // 本地环境
   local: {
-    UPLOAD_URL: 'https://service.dameiweb.com/VISA-CENTER/ossUpload/save',
+    UPLOAD_URL: 'https://service.dameiweb.com/VISACENTER-PROGRAM/ossUpload/save',
   },
 
   // 开发环境
   dev: {
-    UPLOAD_URL: 'https://service.dameiweb.com/VISA-CENTER/ossUpload/save',
+    UPLOAD_URL: 'https://service.dameiweb.com/VISACENTER-PROGRAM/ossUpload/save',
   },
 
   // 生产
   prd: {
-    UPLOAD_URL: 'https://service.dameiweb.com/VISA-CENTER/ossUpload/save',
+    UPLOAD_URL: 'https://service.dameiweb.com/VISACENTER-PROGRAM/ossUpload/save',
   },
 };
 

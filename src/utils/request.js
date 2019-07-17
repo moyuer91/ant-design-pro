@@ -3,6 +3,7 @@ import { notification } from 'antd';
 import router from 'umi/router';
 import hash from 'hash.js';
 import { isAntdPro } from './utils';
+import { getToken } from './authority';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -91,6 +92,7 @@ export default function request(url, option) {
       newOptions.headers = {
         Accept: 'application/json',
         'Content-Type': 'application/json; charset=utf-8',
+        DM_AUTH: getToken(),
         ...newOptions.headers,
       };
       newOptions.body = JSON.stringify(newOptions.body);
@@ -98,6 +100,7 @@ export default function request(url, option) {
       // newOptions.body is FormData
       newOptions.headers = {
         Accept: 'application/json',
+        DM_AUTH: getToken(),
         ...newOptions.headers,
       };
     }

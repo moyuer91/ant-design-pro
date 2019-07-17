@@ -1,5 +1,9 @@
 import { routerRedux } from 'dva/router';
-import { getVisaProject, submitVisaProject } from '../../../services/visa/VisaFormService';
+import {
+  getVisaProject,
+  submitVisaProject,
+  translate,
+} from '../../../services/visa/VisaFormService';
 import { getCheckedData, isSuccessful } from '@/utils/VisaUtils';
 
 export default {
@@ -38,6 +42,17 @@ export default {
       });
     },
 
+    *translate({ payload, callback }, { call, put }) {
+      const response = yield call(translate, payload);
+      yield put({
+        type: 'doNothing',
+        payload: {},
+      });
+      if (callback) {
+        callback(isSuccessful(response));
+      }
+    },
+
     *submit({ payload }, { call, put, select }) {
       const response = yield call(submitVisaProject, payload);
       const { appOrderNo, applicant } = yield select(state => state.visaform);
@@ -55,6 +70,11 @@ export default {
   },
 
   reducers: {
+    doNothing(state) {
+      return {
+        ...state,
+      };
+    },
     getForm(state, action) {
       return {
         ...state,
