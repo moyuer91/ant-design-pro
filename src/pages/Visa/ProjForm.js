@@ -2,7 +2,7 @@ import React, { PureComponent, Fragment } from 'react';
 import { Layout, Button, Drawer, Modal, message } from 'antd';
 import { connect } from 'dva';
 import Page from './Page';
-import ProjPreview from './ProjPreview';
+import ProjPreview from './components/ProjPreview';
 
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { setToken } from '@/utils/authority';

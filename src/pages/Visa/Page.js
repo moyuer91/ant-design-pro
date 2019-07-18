@@ -25,6 +25,7 @@ import { getToken } from '@/utils/authority';
 import styles from './style.less';
 import TableFormItem from './TableFormItem';
 import PassportUpload from './components/PassportUpload';
+import CitySelect from './components/CitySelect';
 
 const { TextArea } = Input;
 const { Paragraph } = Typography;
@@ -391,6 +392,11 @@ class Page extends PureComponent {
           initialValue: initFileList || [],
           rules,
         })(<PassportUpload {...props} />);
+      } else if (type === 14) {
+        elemItem = getFieldDecorator(id.toString(), {
+          initialValue: value,
+          rules,
+        })(<CitySelect />);
       } else if (type === 20) {
         try {
           const columnsCfg = JSON.parse(script);
