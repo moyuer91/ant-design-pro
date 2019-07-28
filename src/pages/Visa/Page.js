@@ -15,7 +15,7 @@ import {
   Checkbox,
   InputNumber,
   Upload,
-  Cascader,
+  // Cascader,
   Radio,
   Icon,
   Tooltip,
@@ -23,9 +23,9 @@ import {
 } from 'antd';
 import { getToken } from '@/utils/authority';
 import styles from './style.less';
-import TableFormItem from './TableFormItem';
 import PassportUpload from './components/PassportUpload';
 import CitySelect from './components/CitySelect';
+import TableFormItemWithModal from './TableFormItemWithModal';
 
 const { TextArea } = Input;
 const { Paragraph } = Typography;
@@ -38,41 +38,6 @@ function evil(fn) {
   const result = new Fn(`return ${fn}`)();
   return result;
 }
-
-const cascaDerOpitons = [
-  {
-    value: 'zhejiang',
-    label: '浙江',
-    children: [
-      {
-        value: 'hangzhou',
-        label: '杭州',
-        children: [
-          {
-            value: 'xihuqu',
-            label: '西湖区',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    value: 'jiangsu',
-    label: '江苏',
-    children: [
-      {
-        value: 'nanjing',
-        label: '南京',
-        children: [
-          {
-            value: 'gulouqu',
-            label: '鼓楼区',
-          },
-        ],
-      },
-    ],
-  },
-];
 
 @connect(({ visapage, loading }) => ({
   visapage,
@@ -317,12 +282,12 @@ class Page extends PureComponent {
               ))}
           </Select>
         );
-      } else if (type === 11) {
-        const cascaDerValue = JSON.parse(value);
-        elemItem = getFieldDecorator(id.toString(), {
-          initialValue: cascaDerValue,
-          rules,
-        })(<Cascader options={cascaDerOpitons} />);
+        // } else if (type === 11) {
+        //   const cascaDerValue = JSON.parse(value);
+        //   elemItem = getFieldDecorator(id.toString(), {
+        //     initialValue: cascaDerValue,
+        //     rules,
+        //   })(<Cascader options={cascaDerOpitons} />);
       } else if (type === 12) {
         // 上传文件
         const initFileList = JSON.parse(value);
@@ -428,10 +393,9 @@ class Page extends PureComponent {
           elemItem = getFieldDecorator(id.toString(), {
             initialValue: {
               tableData,
-              columnsCfg,
             },
             rules,
-          })(<TableFormItem />);
+          })(<TableFormItemWithModal columnsCfg={columnsCfg} />);
         } catch (e) {
           console.log(e.toString());
           // throw new Error('invalid elem prop', e);
@@ -439,7 +403,12 @@ class Page extends PureComponent {
       }
 
       if (type === 20) {
-        return <FormItem key={id}>{elemItem}</FormItem>;
+        return (
+          <Card key={`card_${id}`} title={label} bordered={false}>
+            {tip && <Card.Meta description={tip} />}
+            <FormItem key={id}>{elemItem}</FormItem>
+          </Card>
+        );
       }
       if (type === 3) {
         return (
