@@ -36,7 +36,7 @@ export default {
       const data = [];
       Object.keys(values).forEach(key => {
         let finalValue = values[key];
-        if (elementsMap[key]) {
+        if (elementsMap[key] && values[key]) {
           const { type } = elementsMap[key];
           if (type === 20) {
             // 表格类元素需要特殊处理
@@ -47,6 +47,10 @@ export default {
           } else if (type === 5) {
             // 时间控件 将moment转为 HHmmss
             finalValue = values[key].format('HHmmss');
+          } else if (type === 8) {
+            // rangepicker
+            const rangeList = values[key].map(item => item.format('YYYYMMDD'));
+            finalValue = JSON.stringify(rangeList);
           } else if (type === 11) {
             finalValue = JSON.stringify(values[key]);
           } else if (type === 9) {

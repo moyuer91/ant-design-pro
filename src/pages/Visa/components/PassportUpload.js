@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Upload, Icon, Button, message } from 'antd';
 import moment from 'moment';
-import { getCheckedData } from '@/utils/VisaUtils';
+import { getCheckedData, isSuccessful } from '@/utils/VisaUtils';
 import { getToken } from '@/utils/authority';
 
 class PassportUpload extends PureComponent {
@@ -20,7 +20,7 @@ class PassportUpload extends PureComponent {
     if (file.response) {
       try {
         const checkData = JSON.parse(getCheckedData(file.response));
-        if (checkData) {
+        if (checkData && isSuccessful(checkData)) {
           checkData.birth_date = checkData.birth_date
             ? moment(checkData.birth_date, 'YYYYMMDD')
             : null;
@@ -31,6 +31,8 @@ class PassportUpload extends PureComponent {
             ? moment(checkData.expiry_date, 'YYYYMMDD')
             : null;
           mapResultToForm(checkData);
+        } else {
+          message.error('无法识别护照，请手动录入信息');
         }
       } catch (e) {
         message.error('无法识别护照，请手动录入信息');

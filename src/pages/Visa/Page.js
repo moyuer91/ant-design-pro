@@ -13,7 +13,7 @@ import {
   PageHeader,
   Divider,
   Checkbox,
-  // InputNumber,
+  InputNumber,
   Upload,
   Cascader,
   Radio,
@@ -29,6 +29,7 @@ import CitySelect from './components/CitySelect';
 
 const { TextArea } = Input;
 const { Paragraph } = Typography;
+const { RangePicker } = DatePicker;
 const FormItem = Form.Item;
 
 // 计算表达式的值
@@ -287,6 +288,15 @@ class Page extends PureComponent {
             }}
           />
         );
+      } else if (type === 8) {
+        const rangeInitVal =
+          value && JSON.parse(value)
+            ? JSON.parse(value).map(item => (item ? moment(item, 'YYYYMMDD') : null))
+            : [];
+        elemItem = getFieldDecorator(id.toString(), {
+          initialValue: rangeInitVal,
+          rules,
+        })(<RangePicker />);
       } else if (type === 9) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: JSON.parse(value) || [],
@@ -397,10 +407,24 @@ class Page extends PureComponent {
           initialValue: value,
           rules,
         })(<CitySelect />);
+      } else if (type === 15) {
+        // 数字
+        const actRules = [...rules];
+        elemItem = getFieldDecorator(id.toString(), {
+          initialValue: value,
+          rules: actRules,
+        })(<InputNumber placeholder={placeholder} style={{ display }} />);
+      } else if (type === 16) {
+        // 邮箱
+        const actRules = [...rules, { type: 'email', message: '邮箱格式不正确' }];
+        elemItem = getFieldDecorator(id.toString(), {
+          initialValue: value,
+          rules: actRules,
+        })(<Input placeholder={placeholder} style={{ display }} />);
       } else if (type === 20) {
         try {
-          const columnsCfg = JSON.parse(script);
-          const tableData = JSON.parse(value);
+          const columnsCfg = JSON.parse(script) || [];
+          const tableData = JSON.parse(value) || [];
           elemItem = getFieldDecorator(id.toString(), {
             initialValue: {
               tableData,
@@ -441,7 +465,7 @@ class Page extends PureComponent {
           <Divider style={{ margin: '0 0 0' }} />
           <Form onSubmit={this.handleSubmit} style={{ marginTop: 8 }}>
             {formItems}
-            <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
+            <FormItem className={styles.optional} {...submitFormLayout} style={{ marginTop: 32 }}>
               <Button style={{ marginLeft: 8 }} onClick={this.handleSave}>
                 保存
               </Button>
