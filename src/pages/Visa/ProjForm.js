@@ -133,6 +133,7 @@ class ProjForm extends PureComponent {
       if (page.id === activePageId && i >= 1) {
         const previousId = pages[i - 1].id;
         this.onSwitch(previousId);
+
         return;
       }
     }

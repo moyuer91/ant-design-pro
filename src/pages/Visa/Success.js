@@ -6,6 +6,10 @@ import * as moment from 'moment';
 const { Step } = Steps;
 
 class Success extends PureComponent {
+  onBackToMain = () => {
+    window.open('http://www.baidu.com');
+  };
+
   render() {
     const {
       location: { query },
@@ -55,7 +59,9 @@ class Success extends PureComponent {
 
     const actions = (
       <Fragment>
-        <Button type="primary">返回首页</Button>
+        <Button type="primary" onClick={this.onBackToMain}>
+          返回首页
+        </Button>
       </Fragment>
     );
     return (

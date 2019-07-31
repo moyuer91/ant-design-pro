@@ -116,10 +116,48 @@ class Page extends PureComponent {
     } = this.props;
     const { ruleType, script } = displayWhen;
     if (displayWhen) {
-      if (ruleType === 1) {
+      if (ruleType === 'script') {
         // 脚本形式进行判定
+        /* 脚本方式案例  判断年龄来控制显示
+        {"id":106,"ruleType":"script","script":"function(displayWhen, context) {const {getFieldValue, moment} = context;const targetVal = getFieldValue(displayWhen.id);if (targetVal) {if (moment().subtract(18, 'y').isAfter(targetVal)) {return false;} else {return true;}} else {return false;}}"}
+        */
         const result = evil(script)(displayWhen, { moment, getFieldValue });
         display = result ? 'block' : 'none';
+      } else if (ruleType === 'notEqual') {
+        // 不相等
+        display = getFieldValue(displayWhen.id) !== displayWhen.value ? 'block' : 'none';
+      } else if (ruleType === 'oneOf') {
+        // 多个值里面的一个
+        display =
+          displayWhen.value.indexOf(getFieldValue(displayWhen.id)) !== -1 ? 'block' : 'none';
+      } else if (ruleType === 'multiCondAnd') {
+        // 多条件联动
+        display = 'block';
+        const { conditions } = displayWhen;
+        for (let i = 0; i < conditions.length; i += 1) {
+          if (getFieldValue(conditions[i].id) !== conditions[i].value) {
+            display = 'none';
+            break;
+          }
+        }
+      } else if (ruleType === 'multiCondOr') {
+        // 多条件联动
+        display = 'none';
+        const { conditions } = displayWhen;
+        for (let i = 0; i < conditions.length; i += 1) {
+          if (getFieldValue(conditions[i].id) === conditions[i].value) {
+            display = 'block';
+            break;
+          }
+        }
+      } else if (ruleType === 'anyChecked') {
+        // 关联的字段value为数组，切数组长度大于0(checkbox至少选中一个)
+        const arr = getFieldValue(displayWhen.id);
+        if (arr && arr instanceof Array && arr.length > 0) {
+          display = 'block';
+        } else {
+          display = 'none';
+        }
       } else {
         // 默认使用值相等的形式进行判定
         display = getFieldValue(displayWhen.id) === displayWhen.value ? 'block' : 'none';
@@ -411,6 +449,7 @@ class Page extends PureComponent {
         );
       }
       if (type === 3) {
+        // blockdivider
         return (
           <Card key={`card_${id}`} title={label} bordered={false}>
             {tip && <Card.Meta description={tip} />}
@@ -418,6 +457,10 @@ class Page extends PureComponent {
         );
       }
 
+      if (type === 17) {
+        // divider
+        return <Divider style={{ margin: '10 0 30' }} />;
+      }
       // const shortLabelLayout={span:}
 
       return (

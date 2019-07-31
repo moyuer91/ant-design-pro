@@ -52,16 +52,15 @@ const CreateForm = Form.create()(props => {
     >
       <Form>
         {formItems.map(item => {
-          const { rules, type, options, value } = item;
-          const optionsData = options ? JSON.parse(options) : [];
+          const { rules, type, options = [], value } = item;
           let formItemContent;
           let initialValue = value;
           if (type === 1) {
             // 下拉框
             formItemContent = (
               <Select>
-                {optionsData &&
-                  optionsData.map(option => (
+                {options &&
+                  options.map(option => (
                     <Select.Option key={option.value} value={option.value}>
                       {option.label}
                     </Select.Option>
@@ -85,7 +84,7 @@ const CreateForm = Form.create()(props => {
           return (
             <FormItem {...formItemLayout} label={item.title}>
               {form.getFieldDecorator(item.dataIndex, {
-                rules: rules ? JSON.parse(rules) : null,
+                rules,
                 initialValue,
               })(formItemContent)}
             </FormItem>
@@ -211,7 +210,7 @@ class TableFormItemWithModal extends PureComponent {
     const { modalVisible, editRowData, editRowKey, isNew } = this.state;
     const { columnsCfg } = this.props;
     const columns = columnsCfg.map(cfg => {
-      const { options } = cfg;
+      const { options = [] } = cfg;
       return {
         title: cfg.title,
         dataIndex: cfg.dataIndex,
@@ -220,10 +219,9 @@ class TableFormItemWithModal extends PureComponent {
         render: text => {
           if (cfg.type === 1) {
             // select类型
-            const optionsData = options ? JSON.parse(options) : [];
-            for (let i = 0; i < optionsData.length; i += 1) {
-              if (optionsData[i].value === text) {
-                return optionsData[i].label;
+            for (let i = 0; i < options.length; i += 1) {
+              if (options[i].value === text) {
+                return options[i].label;
               }
             }
           }

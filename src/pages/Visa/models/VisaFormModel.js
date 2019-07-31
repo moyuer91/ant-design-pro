@@ -93,6 +93,7 @@ export default {
           }
         }
       }
+      window.scroll(0, 0);
       return {
         ...state,
         pages: newPages,
