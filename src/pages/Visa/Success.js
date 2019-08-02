@@ -2,12 +2,14 @@ import React, { Fragment, PureComponent } from 'react';
 import { Button, Row, Col, Steps, Card } from 'antd';
 import Result from '@/components/Result';
 import * as moment from 'moment';
+import router from 'umi/router';
 
 const { Step } = Steps;
 
 class Success extends PureComponent {
   onBackToMain = () => {
-    window.open('http://www.baidu.com');
+    // window.open('http://www.baidu.com');
+    router.push('/');
   };
 
   render() {

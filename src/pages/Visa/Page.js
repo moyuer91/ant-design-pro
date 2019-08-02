@@ -61,20 +61,14 @@ class Page extends PureComponent {
   }
 
   handleSubmit = e => {
-    const { dispatch, form } = this.props;
     e.preventDefault();
-    form.validateFieldsAndScroll((err, values) => {
-      if (!err) {
-        dispatch({
-          type: 'visapage/submit',
-          payload: values,
-        });
-      }
+    const { handleSubmit } = this.props;
+    this.handleSave().then(() => {
+      handleSubmit();
     });
   };
 
   handleSave = e => {
-    let result = false;
     const {
       dispatch,
       form,
@@ -82,31 +76,37 @@ class Page extends PureComponent {
       projectId,
       visapage: { elements },
     } = this.props;
-    if (elements && elements.length > 0) {
-      const elementsMap = {};
-      elements.forEach(item => {
-        elementsMap[item.id] = item;
-      });
-      if (e) {
-        e.preventDefault();
-      }
 
-      form.validateFieldsAndScroll((err, values) => {
-        if (!err) {
-          dispatch({
-            type: 'visapage/save',
-            payload: {
-              prjId: projectId,
-              pageId: id,
-              values,
-              elementsMap,
-            },
-          });
-          result = true;
+    const promise = new Promise((resolve, reject) => {
+      if (elements && elements.length > 0) {
+        const elementsMap = {};
+        elements.forEach(item => {
+          elementsMap[item.id] = item;
+        });
+        if (e) {
+          e.preventDefault();
         }
-      });
-    }
-    return result;
+        form.validateFieldsAndScroll((err, values) => {
+          if (!err) {
+            dispatch({
+              type: 'visapage/save',
+              payload: {
+                prjId: projectId,
+                pageId: id,
+                values,
+                elementsMap,
+              },
+            });
+            resolve(values);
+          } else {
+            reject(err);
+          }
+        });
+      } else {
+        reject(new Error('页面没有元素'));
+      }
+    });
+    return promise;
   };
 
   decideDisplayType = displayWhen => {
@@ -205,7 +205,6 @@ class Page extends PureComponent {
       handleNext,
       handlePrevious,
       hasNext,
-      handleSubmit,
       hasPrevious,
       submitting,
       visapage: { pageName, descr, elements },
@@ -271,7 +270,7 @@ class Page extends PureComponent {
         );
       } else if (type === 4) {
         elemItem = getFieldDecorator(id.toString(), {
-          initialValue: value ? moment(value, 'YYYYMMDD') : null,
+          initialValue: value ? moment(value, 'YYYY-MM-DD') : null,
           rules,
         })(<DatePicker style={{ display }} />);
       } else if (type === 5) {
@@ -294,7 +293,7 @@ class Page extends PureComponent {
       } else if (type === 8) {
         const rangeInitVal =
           value && JSON.parse(value)
-            ? JSON.parse(value).map(item => (item ? moment(item, 'YYYYMMDD') : null))
+            ? JSON.parse(value).map(item => (item ? moment(item, 'YYYY-MM-DD') : null))
             : [];
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: rangeInitVal,
@@ -475,45 +474,47 @@ class Page extends PureComponent {
         <PageHeader title={pageName}>
           <Paragraph>{descr}</Paragraph>
           <Divider style={{ margin: '0 0 0' }} />
-          <Form onSubmit={this.handleSubmit} style={{ marginTop: 8 }}>
-            {formItems}
-            <FormItem className={styles.optional} {...submitFormLayout} style={{ marginTop: 32 }}>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleSave}>
-                保存
-              </Button>
-              {hasPrevious && (
-                <Button
-                  type="primary"
-                  loading={submitting}
-                  style={{ marginLeft: 8 }}
-                  onClick={handlePrevious}
-                >
-                  上一页
+          <div className={styles.pageForm}>
+            <Form style={{ marginTop: 8 }}>
+              {formItems}
+              <FormItem className={styles.optional} {...submitFormLayout} style={{ marginTop: 32 }}>
+                <Button style={{ marginLeft: 8 }} onClick={this.handleSave}>
+                  保存
                 </Button>
-              )}
-              {hasNext && (
-                <Button
-                  type="primary"
-                  loading={submitting}
-                  style={{ marginLeft: 8 }}
-                  onClick={handleNext}
-                >
-                  保存并下一页
-                </Button>
-              )}
-              {!hasNext && (
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={submitting}
-                  style={{ marginLeft: 8 }}
-                  onClick={handleSubmit}
-                >
-                  提交
-                </Button>
-              )}
-            </FormItem>
-          </Form>
+                {hasPrevious && (
+                  <Button
+                    type="primary"
+                    loading={submitting}
+                    style={{ marginLeft: 8 }}
+                    onClick={handlePrevious}
+                  >
+                    上一页
+                  </Button>
+                )}
+                {hasNext && (
+                  <Button
+                    type="primary"
+                    loading={submitting}
+                    style={{ marginLeft: 8 }}
+                    onClick={handleNext}
+                  >
+                    保存并下一页
+                  </Button>
+                )}
+                {!hasNext && (
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    loading={submitting}
+                    style={{ marginLeft: 8 }}
+                    onClick={this.handleSubmit}
+                  >
+                    提交
+                  </Button>
+                )}
+              </FormItem>
+            </Form>
+          </div>
         </PageHeader>
       </div>
     );

@@ -115,10 +115,23 @@
   }
 }
 
-.ant-form-item-label {
-  label {
-    span {
-      text-align: left;
+.pageForm {
+  :global {
+    .ant-form-item {
+      margin-right: 0;
+      margin-bottom: 24px;
+      > .ant-form-item-label {
+        padding-right: 8px;
+        line-height: 32px;
+      }
+      .ant-form-item-control {
+        line-height: 32px;
+      }
     }
+  }
+  .submitButtons {
+    display: block;
+    margin-bottom: 24px;
+    white-space: nowrap;
   }
 }

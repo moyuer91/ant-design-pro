@@ -79,31 +79,36 @@ class ProjForm extends PureComponent {
   onSwitch = tabId => {
     const { dispatch } = this.props;
     let finished = false;
-    if (!this.curPage.handleSave()) {
-      Modal.confirm({
-        title: '填写错误或未完成',
-        content: '当前表单页未完成或者存在错误，是否仍要切换？',
-        okText: '确认',
-        cancelText: '取消',
-        onOk: () => {
-          dispatch({
-            type: 'visaform/switchTab',
-            payload: {
-              activePageId: parseInt(tabId, 10),
-            },
-          });
-        },
-      });
-      return;
-    }
-    finished = true;
-    dispatch({
-      type: 'visaform/switchTab',
-      payload: {
-        activePageId: parseInt(tabId, 10),
-        finished,
+    this.curPage.handleSave().then(
+      () => {
+        // 保存成功
+        finished = true;
+        dispatch({
+          type: 'visaform/switchTab',
+          payload: {
+            activePageId: parseInt(tabId, 10),
+            finished,
+          },
+        });
       },
-    });
+      () => {
+        // 保存失败
+        Modal.confirm({
+          title: '填写错误或未完成',
+          content: '当前表单页未完成或者存在错误，是否仍要切换？',
+          okText: '确认',
+          cancelText: '取消',
+          onOk: () => {
+            dispatch({
+              type: 'visaform/switchTab',
+              payload: {
+                activePageId: parseInt(tabId, 10),
+              },
+            });
+          },
+        });
+      }
+    );
   };
 
   // 下一页
@@ -140,7 +145,7 @@ class ProjForm extends PureComponent {
   };
 
   // 提交
-  handleSubmit = e => {
+  handleSubmit = () => {
     const {
       dispatch,
       match,
@@ -157,7 +162,6 @@ class ProjForm extends PureComponent {
         return;
       }
     }
-    e.preventDefault();
     dispatch({
       type: 'visaform/submit',
       payload: {
@@ -223,7 +227,7 @@ class ProjForm extends PureComponent {
         </Content>
         <Drawer
           title="签证申请单预览"
-          width={window.screen.width > 600 ? 600 : window.screen.width}
+          width={window.screen.width > 1000 ? 1000 : window.screen.width}
           placement="right"
           onClose={this.onDrawerClose}
           visible={drawerVisible}

@@ -31,7 +31,7 @@ export default {
         payload: { ...pageInfo },
       });
     },
-    *save({ payload }, { call }) {
+    *save({ payload }, { call, put }) {
       const { pageId, prjId, values, elementsMap } = payload;
       const data = [];
       Object.keys(values).forEach(key => {
@@ -42,14 +42,14 @@ export default {
             // 表格类元素需要特殊处理
             finalValue = JSON.stringify(values[key].tableData);
           } else if (type === 4) {
-            // 日期控件 需要将moment转为 YYYYMMDD
-            finalValue = values[key].format('YYYYMMDD');
+            // 日期控件 需要将moment转为 YYYY-MM-DD
+            finalValue = values[key].format('YYYY-MM-DD');
           } else if (type === 5) {
             // 时间控件 将moment转为 HHmmss
             finalValue = values[key].format('HHmmss');
           } else if (type === 8) {
             // rangepicker
-            const rangeList = values[key].map(item => item.format('YYYYMMDD'));
+            const rangeList = values[key].map(item => item.format('YYYY-MM-DD'));
             finalValue = JSON.stringify(rangeList);
           } else if (type === 11) {
             finalValue = JSON.stringify(values[key]);
@@ -78,18 +78,20 @@ export default {
       });
 
       const response = yield call(saveVisaPage, { id: pageId, prjId, data });
+      let finished = true;
       if (isSuccessful(response)) {
         message.success('保存成功');
-        // yield put({
-        //   type: 'fetch',
-        //   payload: {
-        //     projectId:prjId,
-        //     pageId,
-        //   },
-        // });
       } else {
         message.error(`保存失败:${response.msg}`);
+        finished = false;
       }
+      yield put({
+        type: 'visaform/updateFinSts',
+        payload: {
+          finished,
+          pageId,
+        },
+      });
     },
   },
 

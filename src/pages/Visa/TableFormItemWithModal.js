@@ -70,7 +70,7 @@ const CreateForm = Form.create()(props => {
           } else if (type === 2) {
             // 日期
             initialValue = value ? moment(value, 'YYYY-MM-DD') : null;
-            formItemContent = <DatePicker />;
+            formItemContent = <DatePicker style={{ width: '100%' }} />;
           } else if (type === 3) {
             // 文本域
             formItemContent = (

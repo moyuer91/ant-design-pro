@@ -49,6 +49,9 @@ export default [
                 name: 'page',
                 component: './Visa/Page',
               },
+              {
+                component: '404',
+              },
             ],
           },
           {
@@ -60,6 +63,9 @@ export default [
             path: '/visa/result/error',
             name: 'applyerror',
             component: './Visa/Error',
+          },
+          {
+            component: '404',
           },
         ],
       },
