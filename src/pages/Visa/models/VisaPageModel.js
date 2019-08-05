@@ -31,7 +31,7 @@ export default {
         payload: { ...pageInfo },
       });
     },
-    *save({ payload }, { call, put }) {
+    *save({ payload, callback }, { call, put }) {
       const { pageId, prjId, values, elementsMap } = payload;
       const data = [];
       Object.keys(values).forEach(key => {
@@ -79,11 +79,13 @@ export default {
 
       const response = yield call(saveVisaPage, { id: pageId, prjId, data });
       let finished = true;
+      let success = true;
       if (isSuccessful(response)) {
         message.success('保存成功');
       } else {
         message.error(`保存失败:${response.msg}`);
         finished = false;
+        success = false;
       }
       yield put({
         type: 'visaform/updateFinSts',
@@ -92,6 +94,9 @@ export default {
           pageId,
         },
       });
+      if (callback) {
+        callback(success);
+      }
     },
   },
 

@@ -120,6 +120,10 @@ class VisaList extends PureComponent {
     });
     dispatch({
       type: 'visaList/fetch',
+      payload: {
+        pageNum: 1,
+        pageSize: 10,
+      },
     });
   }
 
@@ -134,7 +138,7 @@ class VisaList extends PureComponent {
     }, {});
 
     const params = {
-      currentPage: pagination.current,
+      pageNum: pagination.current,
       pageSize: pagination.pageSize,
       ...formValues,
       ...filters,
@@ -373,11 +377,12 @@ class VisaList extends PureComponent {
 
   render() {
     const {
-      visaList: { visaList, initInfo },
+      visaList: { visaList, initInfo, pagination },
       loading,
     } = this.props;
     const tableData = {
       list: visaList,
+      pagination,
     };
     const { countries, presentCities, types, statusOpts } = initInfo;
     const countriesMap = {};

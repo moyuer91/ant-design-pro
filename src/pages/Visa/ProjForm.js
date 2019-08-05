@@ -138,7 +138,6 @@ class ProjForm extends PureComponent {
       if (page.id === activePageId && i >= 1) {
         const previousId = pages[i - 1].id;
         this.onSwitch(previousId);
-
         return;
       }
     }
@@ -152,6 +151,7 @@ class ProjForm extends PureComponent {
       visaform: { pages },
     } = this.props;
     const { params } = match;
+
     // 校验所有页面是否填写完整
     for (let i = 0; i < pages.length; i += 1) {
       if (!pages[i].finished) {

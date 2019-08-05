@@ -96,8 +96,14 @@ class Page extends PureComponent {
                 values,
                 elementsMap,
               },
+              callback: success => {
+                if (success) {
+                  resolve(values);
+                } else {
+                  reject(err);
+                }
+              },
             });
-            resolve(values);
           } else {
             reject(err);
           }

@@ -49,6 +49,7 @@ const CreateForm = Form.create()(props => {
       visible={modalVisible}
       onOk={okHandle}
       onCancel={() => handleCancel()}
+      width={800}
     >
       <Form>
         {formItems.map(item => {

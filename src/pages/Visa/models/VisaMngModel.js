@@ -7,6 +7,7 @@ export default {
 
   state: {
     visaList: [],
+    pagination: {},
     initInfo: {},
   },
 
@@ -33,6 +34,10 @@ export default {
         type: 'queryList',
         payload: {
           visaList,
+          pagination: {
+            pageSize: visaInfo.pageSize,
+            total: visaInfo.total,
+          },
         },
       });
     },
