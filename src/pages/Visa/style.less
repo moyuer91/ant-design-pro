@@ -1,5 +1,6 @@
 @import '~antd/lib/style/themes/default.less';
 
+@nav-header-height: @layout-header-height;
 .card {
   margin-bottom: 24px;
 }
@@ -133,5 +134,57 @@
     display: block;
     margin-bottom: 24px;
     white-space: nowrap;
+  }
+}
+
+.trigger {
+  padding: 0 24px;
+  font-size: 18px;
+  line-height: 64px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.trigger:hover {
+  color: #1890ff;
+}
+
+.logo {
+  height: 32px;
+  margin: 16px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+:global {
+  .top-nav-menu li.ant-menu-item {
+    height: @nav-header-height;
+    line-height: @nav-header-height;
+  }
+  .drawer .drawer-content {
+    background: #001529;
+  }
+  .ant-menu-inline-collapsed {
+    & > .ant-menu-item .sider-menu-item-img + span,
+    &
+      > .ant-menu-item-group
+      > .ant-menu-item-group-list
+      > .ant-menu-item
+      .sider-menu-item-img
+      + span,
+    & > .ant-menu-submenu > .ant-menu-submenu-title .sider-menu-item-img + span {
+      display: inline-block;
+      max-width: 0;
+      opacity: 0;
+    }
+  }
+  .ant-menu-item .sider-menu-item-img + span,
+  .ant-menu-submenu-title .sider-menu-item-img + span {
+    opacity: 1;
+    transition: opacity 0.3s @ease-in-out, width 0.3s @ease-in-out;
+  }
+  .ant-drawer-left {
+    .ant-drawer-body {
+      padding: 0;
+    }
   }
 }

@@ -55,13 +55,13 @@ export default {
 
     *submit({ payload }, { call, put, select }) {
       const response = yield call(submitVisaProject, payload);
-      const { appOrderNo, applicant } = yield select(state => state.visaform);
+      const { appOrderNo, applicant, id } = yield select(state => state.visaform);
       yield put(
         routerRedux.push(
           isSuccessful(response)
             ? {
                 pathname: '/visa/result/success',
-                query: { appOrderNo, applicant },
+                query: { appOrderNo, applicant, id },
               }
             : '/visa/result/error'
         )

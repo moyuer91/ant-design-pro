@@ -5,12 +5,8 @@ import { connect } from 'dva';
 import { ContainerQuery } from 'react-container-query';
 import classNames from 'classnames';
 import Media from 'react-media';
-import Footer from './Footer';
 import Context from './MenuContext';
 import getPageTitle from '@/utils/getPageTitle';
-import styles from './BasicLayout.less';
-
-const { Content } = Layout;
 
 const query = {
   'screen-xs': {
@@ -72,10 +68,8 @@ class VisaLayout extends React.Component {
       children,
       location: { pathname },
       breadcrumbNameMap,
-      fixedHeader,
     } = this.props;
 
-    const contentStyle = !fixedHeader ? { paddingTop: 0 } : {};
     const layout = (
       <Layout>
         <Layout
@@ -84,10 +78,7 @@ class VisaLayout extends React.Component {
             minHeight: '100vh',
           }}
         >
-          <Content className={styles.content} style={contentStyle}>
-            {children}
-          </Content>
-          <Footer />
+          {children}
         </Layout>
       </Layout>
     );

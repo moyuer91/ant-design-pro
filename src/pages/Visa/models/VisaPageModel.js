@@ -64,10 +64,16 @@ export default {
               name: item.name,
               status: item.status,
               url: item.url,
+              thumbUrl: item.thumbUrl,
             }));
             finalValue = JSON.stringify(saveFileList);
           } else if (type === 13) {
-            finalValue = JSON.stringify(values[key]);
+            const fileList = values[key];
+            const saveFileList = fileList.map(item => ({
+              ...item,
+              thumbUrl: null,
+            }));
+            finalValue = JSON.stringify(saveFileList);
           }
         }
         data.push({

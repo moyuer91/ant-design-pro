@@ -8,8 +8,16 @@ const { Step } = Steps;
 
 class Success extends PureComponent {
   onBackToMain = () => {
-    // window.open('http://www.baidu.com');
-    router.push('/');
+    window.opener = null; // 禁止某些浏览器的一些弹窗
+    window.open('', '_self');
+    window.close();
+  };
+
+  viewDetail = () => {
+    const {
+      location: { query },
+    } = this.props;
+    router.push(`/visa/applform/${query.id}/preview`);
   };
 
   render() {
@@ -61,13 +69,14 @@ class Success extends PureComponent {
 
     const actions = (
       <Fragment>
-        <Button type="primary" onClick={this.onBackToMain}>
-          返回首页
+        <Button onClick={this.onBackToMain}>关闭</Button>
+        <Button type="primary" onClick={this.viewDetail}>
+          查看详情
         </Button>
       </Fragment>
     );
     return (
-      <Card bordered={false}>
+      <Card bordered={false} style={{ height: window.screen.height }}>
         <Result
           type="success"
           title="提交成功"

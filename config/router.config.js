@@ -40,14 +40,18 @@ export default [
             component: './Visa/VisaList',
           },
           {
-            path: '/visa/applform/:id',
+            path: '/visa/applform',
             name: 'applform',
-            component: './Visa/ProjForm',
             routes: [
               {
-                path: '/visa/applform/:id/page/:pageId',
+                path: '/visa/applform/:id/preview',
+                name: 'preview',
+                component: './Visa/components/ProjPreview',
+              },
+              {
+                path: '/visa/applform/:id',
                 name: 'page',
-                component: './Visa/Page',
+                component: './Visa/ProjForm',
               },
               {
                 component: '404',

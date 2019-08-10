@@ -17,11 +17,16 @@ class ProjPreview extends PureComponent {
   }
 
   componentDidMount() {
-    const { dispatch, id } = this.props;
+    const { id, dispatch, match } = this.props;
+    let projectId = id;
+    if (!projectId) {
+      const { params } = match;
+      projectId = params.id;
+    }
     dispatch({
       type: 'projPreview/fetch',
       payload: {
-        projectId: id,
+        projectId,
       },
     });
   }
@@ -150,15 +155,16 @@ class ProjPreview extends PureComponent {
   render() {
     const {
       projPreview: { descr, city, appOrderNo, pagesData },
+      showSwitch,
     } = this.props;
     const { showOriginalData } = this.state;
 
-    const action = (
+    const action = showSwitch ? (
       <Fragment>
         只展示原始数据：
         <Switch checked={showOriginalData} onChange={this.onSwitchChange} />
       </Fragment>
-    );
+    ) : null;
     return (
       <div>
         <PageHeader

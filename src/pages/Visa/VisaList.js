@@ -17,7 +17,7 @@ import {
   Badge,
 } from 'antd';
 import StandardTable from '@/components/StandardTable';
-import PageHeaderWrapper from '@/components/PageHeaderWrapper';
+import PageHeader from '@/components/PageHeader';
 
 import styles from './VisaList.less';
 
@@ -505,7 +505,8 @@ class VisaList extends PureComponent {
     ];
 
     return (
-      <PageHeaderWrapper title="签证信息管理">
+      <div>
+        <PageHeader title="签证信息管理" />
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm(initFormParams)}</div>
@@ -531,7 +532,7 @@ class VisaList extends PureComponent {
           </div>
         </Card>
         <CreateForm {...parentMethods} modalVisible={modalVisible} initInfo={initFormParams} />
-      </PageHeaderWrapper>
+      </div>
     );
   }
 }
