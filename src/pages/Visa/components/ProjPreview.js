@@ -1,5 +1,5 @@
 import React, { PureComponent, Fragment } from 'react';
-import { Descriptions, Table, Card, Switch } from 'antd';
+import { Descriptions, Table, Card, Switch, Button } from 'antd';
 import { connect } from 'dva';
 
 import PageHeader from '@/components/PageHeader';
@@ -152,6 +152,12 @@ class ProjPreview extends PureComponent {
     });
   };
 
+  print = () => {
+    window.document.body.innerHTML = window.document.getElementById('content').innerHTML;
+    window.print();
+    window.location.reload();
+  };
+
   render() {
     const {
       projPreview: { descr, city, appOrderNo, pagesData },
@@ -159,14 +165,20 @@ class ProjPreview extends PureComponent {
     } = this.props;
     const { showOriginalData } = this.state;
 
-    const action = showSwitch ? (
+    const action = (
       <Fragment>
-        只展示原始数据：
-        <Switch checked={showOriginalData} onChange={this.onSwitchChange} />
+        {showSwitch ? (
+          <span>
+            只展示原始数据
+            <Switch checked={showOriginalData} onChange={this.onSwitchChange} />
+            &nbsp;&nbsp;&nbsp;&nbsp;
+          </span>
+        ) : null}
+        <Button onClick={this.print}>打印</Button>
       </Fragment>
-    ) : null;
+    );
     return (
-      <div>
+      <div id="content">
         <PageHeader
           title={`单号：${appOrderNo}`}
           action={action}
