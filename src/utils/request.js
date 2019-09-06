@@ -92,7 +92,6 @@ export default function request(url, option) {
       newOptions.headers = {
         Accept: 'application/json',
         'Content-Type': 'application/json; charset=utf-8',
-        DM_AUTH: getToken(),
         ...newOptions.headers,
       };
       newOptions.body = JSON.stringify(newOptions.body);
@@ -100,11 +99,16 @@ export default function request(url, option) {
       // newOptions.body is FormData
       newOptions.headers = {
         Accept: 'application/json',
-        DM_AUTH: getToken(),
         ...newOptions.headers,
       };
     }
   }
+
+  // 加上网关校验token
+  newOptions.headers = {
+    ...newOptions.headers,
+    DM_AUTH: getToken(),
+  };
 
   const expirys = options.expirys && 60;
   // options.expirys !== false, return the cache,
@@ -137,9 +141,9 @@ export default function request(url, option) {
       if (status === 401) {
         // @HACK
         /* eslint-disable no-underscore-dangle */
-        window.g_app._store.dispatch({
-          type: 'login/logout',
-        });
+        // window.g_app._store.dispatch({
+        //         //   type: 'login/logout',
+        //         // });
         return;
       }
       // environment should not be used

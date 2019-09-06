@@ -1,25 +1,27 @@
 import request from '@/utils/request';
 // import { stringify } from 'qs';
 
+const urlPrefix = 'https://service.dameiweb.com/XPAGE';
+// const urlPrefix="";
+
 export async function getVisaProject(params) {
   const { projectId } = params;
-  console.log(`projectId:${projectId}`);
-  return request(`/visaservice/projects/${projectId}`);
+  return request(`${urlPrefix}/visaservice/projects/${projectId}`);
 }
 
 export async function getVisaProjectPreview(params) {
   const { projectId } = params;
   console.log(`projectId:${projectId}`);
-  return request(`/visaservice/projects/${projectId}/preview`);
+  return request(`${urlPrefix}/visaservice/projects/${projectId}/preview`);
 }
 
 export async function getVisaPage(params) {
   const { pageId, projectId } = params;
-  return request(`/visaservice/projects/${projectId}/pages/${pageId}`);
+  return request(`${urlPrefix}/visaservice/projects/${projectId}/pages/${pageId}`);
 }
 
 export async function saveVisaPage(params) {
-  return request('/visaservice/pages/data', {
+  return request(`${urlPrefix}/XPAGE/visaservice/pages/data`, {
     method: 'POST',
     body: params,
   });
@@ -27,7 +29,7 @@ export async function saveVisaPage(params) {
 
 export async function submitVisaProject(params) {
   const { projectId } = params;
-  return request(`/visaservice/projects/${projectId}/application`, {
+  return request(`${urlPrefix}/visaservice/projects/${projectId}/application`, {
     method: 'POST',
     body: params,
   });
@@ -35,8 +37,11 @@ export async function submitVisaProject(params) {
 
 export async function translate(params) {
   const { projectId } = params;
-  return request(`/visaservice/projects/${projectId}/translation`, {
-    method: 'POST',
-    body: params,
-  });
+  return request(
+    `https://service.dameiweb.com/XPAGE/visaservice/projects/${projectId}/translation`,
+    {
+      method: 'POST',
+      body: params,
+    }
+  );
 }

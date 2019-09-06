@@ -1,25 +1,11 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
-import router from 'umi/router';
-import {
-  Row,
-  Col,
-  Card,
-  Form,
-  Input,
-  Select,
-  Icon,
-  Button,
-  DatePicker,
-  Modal,
-  message,
-  Badge,
-} from 'antd';
+import { Row, Col, Card, Form, Input, Select, Icon, Button, DatePicker, Modal, Badge } from 'antd';
 import StandardTable from '@/components/StandardTable';
 import PageHeader from '@/components/PageHeader';
-
 import styles from './VisaList.less';
+import { setToken } from '@/utils/authority';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -114,7 +100,13 @@ class VisaList extends PureComponent {
   };
 
   componentDidMount() {
-    const { dispatch } = this.props;
+    const {
+      dispatch,
+      location: { query },
+    } = this.props;
+
+    // 保存token
+    setToken(query.token);
     dispatch({
       type: 'visaList/init',
     });
@@ -144,7 +136,7 @@ class VisaList extends PureComponent {
       ...filters,
     };
     if (sorter.field) {
-      params.sorter = `${sorter.field}_${sorter.order}`;
+      params.orderBy = `${sorter.field} ${sorter.order === 'descend' ? 'desc' : 'asc'}`;
     }
 
     dispatch({
@@ -154,7 +146,8 @@ class VisaList extends PureComponent {
   };
 
   previewItem = id => {
-    router.push(`/visa/applform/${id}`);
+    // router.push(`/visa/applform/${id}`);
+    window.open(`/visa/applform/${id}`);
   };
 
   handleFormReset = () => {
@@ -192,7 +185,7 @@ class VisaList extends PureComponent {
 
       const values = {
         ...fieldsValue,
-        updatedAt: fieldsValue.updatedAt && fieldsValue.updatedAt.valueOf(),
+        createdAt: fieldsValue.createdAt && fieldsValue.createdAt.format('YYYY-MM-DD'),
       };
 
       this.setState({
@@ -213,7 +206,8 @@ class VisaList extends PureComponent {
   };
 
   handleUpdateModalVisible = (flag, record) => {
-    router.push(`/visa/applform/${record.id}`);
+    // router.push(`/visa/applform/${record.id}`);
+    window.open(`/visa/applform/${record.id}`);
   };
 
   handleAdd = fields => {
@@ -225,25 +219,6 @@ class VisaList extends PureComponent {
       },
     });
     this.handleModalVisible();
-  };
-
-  handleUpdate = fields => {
-    const { dispatch } = this.props;
-    const { formValues } = this.state;
-    dispatch({
-      type: 'visaList/update',
-      payload: {
-        query: formValues,
-        body: {
-          name: fields.name,
-          desc: fields.desc,
-          key: fields.key,
-        },
-      },
-    });
-
-    message.success('配置成功');
-    this.handleUpdateModalVisible();
   };
 
   renderSimpleForm(initInfo) {
@@ -265,7 +240,7 @@ class VisaList extends PureComponent {
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="签证类型">
+            <FormItem label="类型">
               {getFieldDecorator('type')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
                   {typeItems}
@@ -309,7 +284,7 @@ class VisaList extends PureComponent {
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="签证类型">
+            <FormItem label="类型">
               {getFieldDecorator('type')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
                   {typeItems}
@@ -337,7 +312,7 @@ class VisaList extends PureComponent {
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="送签城市">
-              {getFieldDecorator('presentCity')(
+              {getFieldDecorator('city')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
                   {presentCityItems}
                 </Select>
@@ -346,7 +321,7 @@ class VisaList extends PureComponent {
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="创建日期">
-              {getFieldDecorator('date')(
+              {getFieldDecorator('createdAt')(
                 <DatePicker style={{ width: '100%' }} placeholder="请输入创建日期" />
               )}
             </FormItem>
@@ -470,10 +445,18 @@ class VisaList extends PureComponent {
         render: val => (countriesMap[val] ? countriesMap[val] : val),
       },
       {
-        title: '签证类型',
+        title: '类型',
         dataIndex: 'type',
         sorter: true,
         render: val => (typesMap[val] ? typesMap[val] : val),
+      },
+      {
+        title: '手机号',
+        dataIndex: 'phone',
+      },
+      {
+        title: '护照号',
+        dataIndex: 'docNo',
       },
       {
         title: '送签城市',

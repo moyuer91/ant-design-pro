@@ -170,6 +170,8 @@ class TableFormItem extends PureComponent {
     const actionColumn = {
       title: '操作',
       key: 'action',
+      width: 150,
+      fixed: true,
       render: (text, record) => {
         const { loading } = this.state;
         if (!!record.editable && loading) {

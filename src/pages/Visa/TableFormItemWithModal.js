@@ -234,6 +234,7 @@ class TableFormItemWithModal extends PureComponent {
     const actionColumn = {
       title: '操作',
       key: 'action',
+      width: '150px',
       render: (text, record) => {
         const { loading } = this.state;
         if (loading) {

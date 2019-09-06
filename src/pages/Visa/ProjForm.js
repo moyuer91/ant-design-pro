@@ -32,7 +32,10 @@ class ProjForm extends PureComponent {
       location: { query },
     } = this.props;
     // 保存token
-    setToken(query.token);
+    if (query.token) {
+      setToken(query.token);
+    }
+
     dispatch({
       type: 'visaform/fetch',
       payload: {
@@ -333,7 +336,7 @@ class ProjForm extends PureComponent {
           keyboard
           destroyOnClose
         >
-          <ProjPreview id={id} showSwitch={query.showTranslate} />
+          <ProjPreview id={id} showSwitch={query.showTranslate} showModify={false} />
         </Drawer>
       </Layout>
     );

@@ -1,8 +1,9 @@
 import React, { PureComponent, Fragment } from 'react';
 import { Descriptions, Table, Card, Switch, Button } from 'antd';
 import { connect } from 'dva';
-
 import PageHeader from '@/components/PageHeader';
+import router from 'umi/router';
+import styles from './ProjPreview.less';
 
 @connect(({ projPreview, loading }) => ({
   projPreview,
@@ -17,19 +18,24 @@ class ProjPreview extends PureComponent {
   }
 
   componentDidMount() {
-    const { id, dispatch, match } = this.props;
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'projPreview/fetch',
+      payload: {
+        projectId: this.getId(),
+      },
+    });
+  }
+
+  getId = () => {
+    const { id, match } = this.props;
     let projectId = id;
     if (!projectId) {
       const { params } = match;
       projectId = params.id;
     }
-    dispatch({
-      type: 'projPreview/fetch',
-      payload: {
-        projectId,
-      },
-    });
-  }
+    return projectId;
+  };
 
   renderLabel = label => {
     return <span style={{ whiteSpace: 'normal' }}>{label}</span>;
@@ -152,29 +158,60 @@ class ProjPreview extends PureComponent {
     });
   };
 
-  print = () => {
-    window.document.body.innerHTML = window.document.getElementById('content').innerHTML;
+  print = id => {
+    window.document.body.innerHTML = window.document.getElementById(id).innerHTML;
     window.print();
     window.location.reload();
   };
+
+  // print=(id)=>{
+  //   const el = document.getElementById(id);
+  //   const iframe = document.createElement('IFRAME');
+  //   let doc = null;
+  //   iframe.setAttribute('style', 'position:absolute;width:0px;height:0px;left:500px;top:500px;');
+  //   document.body.appendChild(iframe);
+  //   doc = iframe.contentWindow.document;
+  //   // 引入打印的专有CSS样式，根据实际修改
+  //   // doc.write('<LINK rel="stylesheet" type="text/css" href="css/print.css">');
+  //   doc.write(el.innerHTML);
+  //   doc.close();
+  //   // 获取iframe的焦点，从iframe开始打印
+  //   iframe.contentWindow.focus();
+  //   iframe.contentWindow.print();
+  //   if (navigator.userAgent.indexOf("MSIE") > 0)
+  //   {
+  //     document.body.removeChild(iframe);
+  //   }
+  // };
 
   render() {
     const {
       projPreview: { descr, city, appOrderNo, pagesData },
       showSwitch,
+      showModify = true,
     } = this.props;
     const { showOriginalData } = this.state;
 
     const action = (
       <Fragment>
         {showSwitch ? (
-          <span>
-            只展示原始数据
+          <span className={styles.noPrint}>
+            只展示原始数据&nbsp;
             <Switch checked={showOriginalData} onChange={this.onSwitchChange} />
             &nbsp;&nbsp;&nbsp;&nbsp;
           </span>
         ) : null}
-        <Button onClick={this.print}>打印</Button>
+        {showModify ? (
+          <Button
+            className={styles.noPrint}
+            onClick={() => router.push(`/visa/applform/${this.getId()}`)}
+          >
+            返回修改
+          </Button>
+        ) : null}
+        <Button className={styles.noPrint} onClick={() => this.print('content')}>
+          打印
+        </Button>
       </Fragment>
     );
     return (
