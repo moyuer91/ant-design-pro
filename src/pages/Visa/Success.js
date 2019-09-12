@@ -44,13 +44,11 @@ class Success extends PureComponent {
     const extra = (
       <Fragment>
         <Row style={{ marginBottom: 16 }}>
-          <Col xs={24} sm={12} md={12} lg={12} xl={6}>
-            <span style={{ color: 'rgba(0, 0, 0, 0.85)' }}>申请单号：</span>
-            {appOrderNo}
-          </Col>
-          <Col xs={24} sm={12} md={12} lg={12} xl={6}>
-            <span style={{ color: 'rgba(0, 0, 0, 0.85)' }}>申请人：</span>
-            {applicant}
+          <Col xs={24}>
+            <span style={{ color: 'rgba(0, 0, 0, 0.85)' }}>申请单号：{appOrderNo}</span>
+            <span style={{ marginLeft: 20, color: 'rgba(0, 0, 0, 0.85)' }}>
+              申请人：{applicant}
+            </span>
           </Col>
         </Row>
         <Steps
@@ -64,6 +62,13 @@ class Success extends PureComponent {
           <Step title={<span style={{ fontSize: 14 }}>提交签证中心</span>} />
           <Step title={<span style={{ fontSize: 14 }}>完成</span>} />
         </Steps>
+        <Row style={{ marginBottom: 16 }}>
+          <Col xs={24}>
+            <span style={{ fontSize: 16, color: 'rgba(255, 0, 0, 1)' }}>
+              请把您的申请单号，发给您的定制师
+            </span>
+          </Col>
+        </Row>
       </Fragment>
     );
 

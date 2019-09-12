@@ -21,7 +21,7 @@ export async function getVisaPage(params) {
 }
 
 export async function saveVisaPage(params) {
-  return request(`${urlPrefix}/XPAGE/visaservice/pages/data`, {
+  return request(`${urlPrefix}/visaservice/pages/data`, {
     method: 'POST',
     body: params,
   });

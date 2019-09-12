@@ -316,7 +316,10 @@ class Page extends PureComponent {
           initialValue: value,
           rules,
         })(
-          <Select>
+          <Select
+            showSearch
+            filterOption={(inputValue, option) => option.props.children.indexOf(inputValue) >= 0}
+          >
             {optionData &&
               optionData.map(option => (
                 <Select.Option key={option.value} value={option.value}>
