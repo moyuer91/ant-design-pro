@@ -1,9 +1,9 @@
 import request from '@/utils/request';
 import { stringify } from 'qs';
 
-const urlPrefix = 'https://service.dameiweb.com/XPAGE';
+// const urlPrefix = 'https://service.dameiweb.com/XPAGE';
 
-// const urlPrefix="";
+const urlPrefix = '';
 export async function createVisaApplication(params) {
   return request('/visa/application', {
     method: 'POST',

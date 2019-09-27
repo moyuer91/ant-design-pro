@@ -68,6 +68,7 @@ class VisaLayout extends React.Component {
       children,
       location: { pathname },
       breadcrumbNameMap,
+      isMobile,
     } = this.props;
 
     const layout = (
@@ -78,7 +79,9 @@ class VisaLayout extends React.Component {
             minHeight: '100vh',
           }}
         >
-          {children}
+          {React.Children.map(children, child => {
+            return React.cloneElement(child, { isMobile });
+          })}
         </Layout>
       </Layout>
     );

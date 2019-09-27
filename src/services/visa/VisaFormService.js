@@ -1,8 +1,8 @@
 import request from '@/utils/request';
 // import { stringify } from 'qs';
 
-const urlPrefix = 'https://service.dameiweb.com/XPAGE';
-// const urlPrefix="";
+// const urlPrefix = 'https://service.dameiweb.com/XPAGE';
+const urlPrefix = '';
 
 export async function getVisaProject(params) {
   const { projectId } = params;

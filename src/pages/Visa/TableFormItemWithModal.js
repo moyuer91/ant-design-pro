@@ -234,7 +234,7 @@ class TableFormItemWithModal extends PureComponent {
     const actionColumn = {
       title: '操作',
       key: 'action',
-      width: '150px',
+      width: '20%',
       render: (text, record) => {
         const { loading } = this.state;
         if (loading) {
@@ -258,6 +258,8 @@ class TableFormItemWithModal extends PureComponent {
       <Fragment>
         <div style={{ paddingTop: '5px' }} />
         <Table
+          className={styles.cusTable}
+          size="small"
           loading={loading}
           columns={columns}
           dataSource={tableData}

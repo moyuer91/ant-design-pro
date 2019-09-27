@@ -12,6 +12,14 @@ function getBase64(file) {
 }
 
 class FileUpload extends PureComponent {
+  static defaultProps = {
+    max: 1,
+    value: [],
+    defaultValue: [],
+    listType: 'picture-card',
+    action: '/VISACENTER-PROGRAM/ossUpload/save',
+  };
+
   constructor(props) {
     super(props);
     const { value } = props;
@@ -30,7 +38,16 @@ class FileUpload extends PureComponent {
     //   message.error("文件上传失败！");
     // }
 
-    const newValue = fileList.map(item => ({ ...item }));
+    const newValue = fileList.map(item => {
+      if (item.status === 'done') {
+        return {
+          ...item,
+          thumbUrl: item.response.data,
+          url: item.response.data,
+        };
+      }
+      return item;
+    });
     if (onChange) {
       onChange(newValue);
     }
@@ -52,7 +69,7 @@ class FileUpload extends PureComponent {
   };
 
   render() {
-    const { max } = this.props;
+    const { max, action } = this.props;
     const { value, previewVisible, previewImage } = this.state;
     const uploadButton = (
       <div>
@@ -64,7 +81,7 @@ class FileUpload extends PureComponent {
       <div className="clearfix">
         <Upload
           {...this.props}
-          action="/VISACENTER-PROGRAM/ossUpload/save"
+          action={action}
           fileList={value}
           headers={{
             DM_AUTH: getToken(),

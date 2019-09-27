@@ -8,7 +8,7 @@ import PageHeader from '@/components/PageHeader';
 import { setToken } from '@/utils/authority';
 import styles from './style.less';
 
-const { Content } = Layout;
+const { Content, Sider } = Layout;
 
 const ButtonGroup = Button.Group;
 @connect(({ visaform, loading }) => ({
@@ -235,14 +235,20 @@ class ProjForm extends PureComponent {
   SiderMenuWrapper = () => {
     const {
       visaform: { pages, activePageId },
+      isMobile,
     } = this.props;
     const { collapsed } = this.state;
-    const menuItems = pages.map(page => (
-      <Menu.Item key={page.id}>
-        <span>{`${page.pageName}${page.finished ? '（已完成）' : ''}`}</span>
-      </Menu.Item>
-    ));
-    return (
+    const menuItems = pages.map(page => {
+      return (
+        <Menu.Item key={page.id}>
+          <span>
+            {page.pageName}
+            {!page.finished ? <span style={{ color: 'red' }}>(未完成)</span> : ''}
+          </span>
+        </Menu.Item>
+      );
+    });
+    return isMobile ? (
       <Drawer
         width={window.screen.width > 300 ? 300 : window.screen.width}
         visible={!collapsed}
@@ -263,6 +269,17 @@ class ProjForm extends PureComponent {
           {menuItems}
         </Menu>
       </Drawer>
+    ) : (
+      <Sider trigger={null} width={256} theme="light">
+        <Menu
+          mode="inline"
+          onClick={this.onMenuItemClick}
+          style={{ width: '100%', paddingRight: '0px' }}
+          selectedKeys={[activePageId.toString()]}
+        >
+          {menuItems}
+        </Menu>
+      </Sider>
     );
   };
 
@@ -270,6 +287,7 @@ class ProjForm extends PureComponent {
     const {
       visaform: { activePageId, id, hasNext, hasPrevious, prjcfgDescr, city, appOrderNo },
       location: { query },
+      isMobile,
     } = this.props;
     const { drawerVisible, collapsed } = this.state;
 
@@ -292,12 +310,14 @@ class ProjForm extends PureComponent {
               style={{ margin: '20px 10px 10px' }}
               title={
                 <span>
-                  <Icon
-                    className={styles.trigger}
-                    type={collapsed ? 'menu-unfold' : 'menu-fold'}
-                    onClick={this.toggle}
-                    style={{ paddingLeft: 0 }}
-                  />
+                  {isMobile ? (
+                    <Icon
+                      className={styles.trigger}
+                      type={collapsed ? 'menu-unfold' : 'menu-fold'}
+                      onClick={this.toggle}
+                      style={{ paddingLeft: 0 }}
+                    />
+                  ) : null}
                   {`单号：${appOrderNo}`}
                 </span>
               }
