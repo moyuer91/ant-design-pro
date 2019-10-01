@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import * as moment from 'moment';
+import * as lodash from 'lodash';
 import {
   Form,
   Input,
@@ -171,6 +172,18 @@ class Page extends PureComponent {
     return display;
   };
 
+  // 判断是否需要禁用
+  decideDisable = disabeWhen => {
+    if (disabeWhen) {
+      const {
+        form: { getFieldValue },
+      } = this.props;
+      const disabled = getFieldValue(disabeWhen.id) === disabeWhen.value;
+      return disabled;
+    }
+    return false;
+  };
+
   getOptionData = options => {
     const { data, relId, cascadeData } = options;
     const {
@@ -187,22 +200,25 @@ class Page extends PureComponent {
   };
 
   renderLabel = (label, tip) => {
-    return (
-      <span style={{ whiteSpace: 'normal' }}>
-        {label}&nbsp;&nbsp;
-        {tip && (
-          <em className={styles.optional}>
-            <Tooltip title={tip}>
-              <Icon
-                type="question-circle"
-                theme="filled"
-                style={{ marginRight: 4, color: '#08c' }}
-              />
-            </Tooltip>
-          </em>
-        )}
-      </span>
-    );
+    if (label) {
+      return (
+        <span style={{ whiteSpace: 'normal' }}>
+          {label}&nbsp;&nbsp;
+          {tip && (
+            <em className={styles.optional}>
+              <Tooltip title={tip}>
+                <Icon
+                  type="question-circle"
+                  theme="filled"
+                  style={{ marginRight: 4, color: '#08c' }}
+                />
+              </Tooltip>
+            </em>
+          )}
+        </span>
+      );
+    }
+    return null;
   };
 
   render() {
@@ -237,6 +253,18 @@ class Page extends PureComponent {
       },
     };
 
+    const checkboxLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 7 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 12, offset: 8 },
+        md: { span: 10, offset: 8 },
+      },
+    };
+
     const formItems = elements.map(elem => {
       const {
         id,
@@ -245,23 +273,32 @@ class Page extends PureComponent {
         label,
         value,
         displayWhen,
+        disableWhen,
         options,
         tip,
-        rules,
+        rules: oriRules,
         script,
         placeholder,
       } = elem;
+      const rules = lodash.cloneDeep(oriRules);
       const display = this.decideDisplayType(displayWhen);
+      const disabled = this.decideDisable(disableWhen);
       if (display === 'none') {
         // 不显示则不渲染
         return null;
+      }
+      if (disabled === true) {
+        // required属性必须放在rules[0]里面
+        if (rules && rules[0] && rules[0].required) {
+          rules[0].required = false;
+        }
       }
       let elemItem = null;
       if (type === 1) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
           rules,
-        })(<Input placeholder={placeholder} style={{ display }} />);
+        })(<Input placeholder={placeholder} style={{ display }} disabled={disabled} />);
       } else if (type === 2) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
@@ -271,18 +308,19 @@ class Page extends PureComponent {
             placeholder={placeholder}
             style={{ display }}
             autosize={{ minRows: 2, maxRows: 6 }}
+            disabled={disabled}
           />
         );
       } else if (type === 4) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value ? moment(value, 'YYYY-MM-DD') : null,
           rules,
-        })(<DatePicker style={{ display }} />);
+        })(<DatePicker style={{ display }} disabled={disabled} />);
       } else if (type === 5) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value ? moment(value, 'HHmmss') : null,
           rules,
-        })(<TimePicker />);
+        })(<TimePicker disabled={disabled} />);
       } else if (type === 6) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
@@ -293,7 +331,27 @@ class Page extends PureComponent {
             style={{
               display,
             }}
+            disabled={disabled}
           />
+        );
+      } else if (type === 7) {
+        // 单个checkbox
+        elemItem = getFieldDecorator(id.toString(), {
+          initialValue: value === 'true' || value === true,
+          valuePropName: 'checked',
+          rules,
+        })(
+          <Checkbox
+            onChange={() => {
+              const { form } = this.props;
+              setTimeout(() => {
+                form.validateFields({ force: true });
+              }, 0);
+            }}
+            disabled={disabled}
+          >
+            {label}
+          </Checkbox>
         );
       } else if (type === 8) {
         const rangeInitVal =
@@ -303,12 +361,12 @@ class Page extends PureComponent {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: rangeInitVal,
           rules,
-        })(<RangePicker />);
+        })(<RangePicker disabled={disabled} />);
       } else if (type === 9) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: JSON.parse(value) || [],
           rules,
-        })(<Checkbox.Group options={options.data} />);
+        })(<Checkbox.Group options={options.data} disabled={disabled} />);
       } else if (type === 10) {
         const optionData = this.getOptionData(options);
         elemItem = getFieldDecorator(id.toString(), {
@@ -318,6 +376,7 @@ class Page extends PureComponent {
           <Select
             showSearch
             filterOption={(inputValue, option) => option.props.children.indexOf(inputValue) >= 0}
+            disabled={disabled}
           >
             {optionData &&
               optionData.map(option => (
@@ -390,7 +449,7 @@ class Page extends PureComponent {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: initFileList || [],
           rules,
-        })(<FileUpload data={{ basePath: projectId }} />);
+        })(<FileUpload data={{ basePath: projectId }} disabled={disabled} />);
       } else if (type === 13) {
         // 上传护照控件
         const mapRule = script ? JSON.parse(script) : {};
@@ -421,21 +480,21 @@ class Page extends PureComponent {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
           rules,
-        })(<CitySelect />);
+        })(<CitySelect disabled={disabled} />);
       } else if (type === 15) {
         // 数字
         const actRules = [...rules];
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
           rules: actRules,
-        })(<InputNumber placeholder={placeholder} style={{ display }} />);
+        })(<InputNumber placeholder={placeholder} style={{ display }} disabled={disabled} />);
       } else if (type === 16) {
         // 邮箱
         const actRules = [...rules, { type: 'email', message: '邮箱格式不正确' }];
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
           rules: actRules,
-        })(<Input placeholder={placeholder} style={{ display }} />);
+        })(<Input placeholder={placeholder} style={{ display }} disabled={disabled} />);
       } else if (type === 20) {
         try {
           const columnsCfg = JSON.parse(script) || [];
@@ -445,7 +504,7 @@ class Page extends PureComponent {
               tableData,
             },
             rules,
-          })(<TableFormItemWithModal columnsCfg={columnsCfg} />);
+          })(<TableFormItemWithModal columnsCfg={columnsCfg} disabled={disabled} />);
         } catch (e) {
           console.log(e.toString());
           // throw new Error('invalid elem prop', e);
@@ -458,6 +517,14 @@ class Page extends PureComponent {
             {tip && <Card.Meta description={tip} />}
             <FormItem key={id}>{elemItem}</FormItem>
           </Card>
+        );
+      }
+      if (type === 7) {
+        // checkbox
+        return (
+          <FormItem key={elem.id} {...checkboxLayout}>
+            {elemItem}
+          </FormItem>
         );
       }
       if (type === 3) {

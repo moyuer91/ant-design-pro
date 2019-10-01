@@ -22,6 +22,7 @@ export default {
           elem.rules = elem.rules ? JSON.parse(elem.rules) : '';
           elem.options = elem.options ? JSON.parse(elem.options) : '';
           elem.displayWhen = elem.displayWhen ? JSON.parse(elem.displayWhen) : '';
+          elem.disableWhen = elem.disableWhen ? JSON.parse(elem.disableWhen) : '';
         } catch (e) {
           message.error(e.toString());
         }
