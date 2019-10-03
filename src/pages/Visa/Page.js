@@ -20,7 +20,6 @@ import {
   Icon,
   Tooltip,
 } from 'antd';
-import { getToken } from '@/utils/authority';
 import styles from './style.less';
 import FileUpload from './components/FileUpload';
 import PassportUpload from './components/PassportUpload';
@@ -230,7 +229,6 @@ class Page extends PureComponent {
       submitting,
       visapage: { pageName, descr, elements },
     } = this.props;
-    const token = getToken();
     // console.log("Page render projectId:"+projectId+"   pageId:"+id);
     const {
       form: { getFieldDecorator, setFieldsValue },
@@ -395,59 +393,8 @@ class Page extends PureComponent {
       } else if (type === 12) {
         // 上传文件
         const initFileList = JSON.parse(value);
-        // const props = {
-        //   name: 'file',
-        //   action: '/VISACENTER-PROGRAM/ossUpload/save',
-        //   headers: {
-        //     DM_AUTH: token,
-        //   },
-        //   data: { basePath: projectId },
-        //   onChange(info) {
-        //     if (info.file.status !== 'uploading') {
-        //       // console.log(info.file, info.fileList);
-        //     }
-        //     if (info.file.status === 'done') {
-        //       message.success(`${info.file.name} 文件上传成功`);
-        //       const { fileList, file } = info;
-        //       const { response } = file;
-        //       fileList.map(item => {
-        //         if (item.uid === file.uid) {
-        //           // eslint-disable-next-line
-        //           item.url = response.data;
-        //         }
-        //         return item;
-        //       });
-        //       // eslint-disable-next-line
-        //       info.file.url = response.data;
-        //     } else if (info.file.status === 'error') {
-        //       message.error(`${info.file.name} 文件上传失败.`);
-        //     }
-        //   },
-        //   beforeUpload(file) {
-        //     const isLt1M = file.size / 1024 / 1024 < 1;
-        //     if (!isLt1M) {
-        //       message.error('文件大小不能超过1M!');
-        //     }
-        //     return isLt1M;
-        //   },
-        // };
-        // elemItem = getFieldDecorator(id.toString(), {
-        //   valuePropName: 'defaultFileList',
-        //   initialValue: initFileList || [],
-        //   getValueFromEvent: ({ fileList }) => {
-        //     return [...fileList] || [];
-        //   },
-        //   rules,
-        // })(
-        //   <Upload {...props}>
-        //     <Button>
-        //       <Icon type="upload" /> {label}
-        //     </Button>
-        //   </Upload>
-        // );
-
         elemItem = getFieldDecorator(id.toString(), {
-          initialValue: initFileList || [],
+          initialValue: { fileList: initFileList } || { fileList: [] },
           rules,
         })(<FileUpload data={{ basePath: projectId }} disabled={disabled} />);
       } else if (type === 13) {
@@ -456,11 +403,6 @@ class Page extends PureComponent {
         const initFileList = JSON.parse(value);
         const newValues = {};
         const props = {
-          listType: 'picture-card',
-          action: '/ERP/visitor/loadPassportInfo',
-          headers: {
-            DM_AUTH: token,
-          },
           mapResultToForm: data => {
             if (data) {
               Object.keys(data).forEach(key => {
@@ -470,10 +412,9 @@ class Page extends PureComponent {
             }
           },
           data: { basePath: projectId },
-          max: 1,
         };
         elemItem = getFieldDecorator(id.toString(), {
-          initialValue: initFileList || [],
+          initialValue: { fileList: initFileList } || { fileList: [] },
           rules,
         })(<PassportUpload {...props} />);
       } else if (type === 14) {

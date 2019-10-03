@@ -11,7 +11,6 @@ export async function getVisaProject(params) {
 
 export async function getVisaProjectPreview(params) {
   const { projectId } = params;
-  console.log(`projectId:${projectId}`);
   return request(`${urlPrefix}/visaservice/projects/${projectId}/preview`);
 }
 

@@ -1,9 +1,11 @@
 import React, { PureComponent } from 'react';
-import { Upload, Icon, Button, message } from 'antd';
+import { message } from 'antd';
 import moment from 'moment';
 import { getCheckedData, isSuccessful } from '@/utils/VisaUtils';
-import { getToken } from '@/utils/authority';
+import FileUpload from './FileUpload';
+import request from '@/utils/request';
 
+const analyzePassportAction = 'https://service.dameiweb.com/ERP/visitor/loadPassportInfo';
 class PassportUpload extends PureComponent {
   constructor(props) {
     super(props);
@@ -13,30 +15,37 @@ class PassportUpload extends PureComponent {
     };
   }
 
-  handleChange = fileInfo => {
-    const { fileList, file } = fileInfo;
+  handleChange = ({ file, fileList }) => {
     const { onChange, mapResultToForm } = this.props;
 
-    if (file.response) {
-      try {
-        const checkData = JSON.parse(getCheckedData(file.response));
-        if (checkData && isSuccessful(checkData)) {
-          checkData.birth_date = checkData.birth_date
-            ? moment(checkData.birth_date, 'YYYYMMDD')
-            : null;
-          checkData.issue_date = checkData.issue_date
-            ? moment(checkData.issue_date, 'YYYYMMDD')
-            : null;
-          checkData.expiry_date = checkData.expiry_date
-            ? moment(checkData.expiry_date, 'YYYYMMDD')
-            : null;
-          mapResultToForm(checkData);
-        } else {
+    if (file.status === 'done') {
+      // 上传完成后进行解析
+      const filedata = new FormData();
+      filedata.append('file', file.originFileObj);
+      request(analyzePassportAction, {
+        method: 'POST',
+        body: filedata,
+      }).then(parseResp => {
+        try {
+          const checkData = JSON.parse(getCheckedData(parseResp));
+          if (checkData && isSuccessful(checkData)) {
+            checkData.birth_date = checkData.birth_date
+              ? moment(checkData.birth_date, 'YYYYMMDD')
+              : null;
+            checkData.issue_date = checkData.issue_date
+              ? moment(checkData.issue_date, 'YYYYMMDD')
+              : null;
+            checkData.expiry_date = checkData.expiry_date
+              ? moment(checkData.expiry_date, 'YYYYMMDD')
+              : null;
+            mapResultToForm(checkData);
+          } else {
+            message.error('无法识别护照，请手动录入信息');
+          }
+        } catch (e) {
           message.error('无法识别护照，请手动录入信息');
         }
-      } catch (e) {
-        message.error('无法识别护照，请手动录入信息');
-      }
+      });
     }
 
     // const newValue=fileList.map(item=>({
@@ -50,32 +59,23 @@ class PassportUpload extends PureComponent {
 
     const newValue = [...fileList];
     if (onChange) {
-      onChange(newValue);
+      onChange({ fileList: newValue, file });
     }
-    this.setState({ value: newValue });
+    this.setState({ value: { fileList: newValue } });
   };
 
   render() {
-    const { max, action } = this.props;
-    const { value } = this.state;
-    const uploadButton = (
-      <Button>
-        <Icon type="upload" /> 点击上传护照
-      </Button>
-    );
+    const {
+      value: { fileList },
+    } = this.state;
     return (
       <div className="clearfix">
-        <Upload
-          action={action}
-          listType="text"
-          fileList={value}
-          headers={{
-            DM_AUTH: getToken(),
-          }}
+        <FileUpload
+          {...this.props}
+          fileList={fileList}
           onChange={this.handleChange}
-        >
-          {value.length >= max ? null : uploadButton}
-        </Upload>
+          uploadBtnText="上传护照"
+        />
       </div>
     );
   }

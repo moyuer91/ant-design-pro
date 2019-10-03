@@ -14,10 +14,10 @@ function getBase64(file) {
 class FileUpload extends PureComponent {
   static defaultProps = {
     max: 1,
-    value: [],
-    defaultValue: [],
+    value: { fileList: [] },
     listType: 'picture-card',
-    action: '/VISACENTER-PROGRAM/ossUpload/save',
+    action: 'https://service.dameiweb.com/VISACENTER-PROGRAM/ossUpload/save',
+    uploadBtnText: '上传照片',
   };
 
   constructor(props) {
@@ -30,8 +30,7 @@ class FileUpload extends PureComponent {
     };
   }
 
-  handleChange = fileInfo => {
-    const { fileList } = fileInfo;
+  handleChange = ({ fileList, file }) => {
     const { onChange } = this.props;
 
     // if (file.status==="error") {
@@ -49,9 +48,9 @@ class FileUpload extends PureComponent {
       return item;
     });
     if (onChange) {
-      onChange(newValue);
+      onChange({ fileList: newValue, file });
     }
-    this.setState({ value: newValue });
+    this.setState({ value: { fileList: newValue } });
   };
 
   handleCancel = () => this.setState({ previewVisible: false });
@@ -69,12 +68,16 @@ class FileUpload extends PureComponent {
   };
 
   render() {
-    const { max, action } = this.props;
-    const { value, previewVisible, previewImage } = this.state;
+    const { max, action, uploadBtnText } = this.props;
+    const {
+      value: { fileList },
+      previewVisible,
+      previewImage,
+    } = this.state;
     const uploadButton = (
       <div>
         <Icon type="plus" />
-        <div className="ant-upload-text">Upload</div>
+        <div className="ant-upload-text">{uploadBtnText}</div>
       </div>
     );
     return (
@@ -82,14 +85,14 @@ class FileUpload extends PureComponent {
         <Upload
           {...this.props}
           action={action}
-          fileList={value}
+          fileList={fileList}
           headers={{
             DM_AUTH: getToken(),
           }}
           onChange={this.handleChange}
           onPreview={this.handlePreview}
         >
-          {value.length >= max ? null : uploadButton}
+          {fileList.length >= max ? null : uploadButton}
         </Upload>
         <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
           <img alt="example" style={{ width: '100%' }} src={previewImage} />
