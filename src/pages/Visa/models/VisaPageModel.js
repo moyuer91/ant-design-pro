@@ -57,27 +57,21 @@ export default {
           } else if (type === 9) {
             // checkbox的数据需要序列化
             finalValue = JSON.stringify(values[key]);
-          } else if (type === 12) {
+          } else if (type === 12 || type === 13) {
             // upload的数据需要序列化
-            const { fileList } = values[key];
-            const saveFileList = fileList.map(item => ({
-              uid: item.uid,
-              name: item.name,
-              status: item.status,
-              url: item.url,
-              thumbUrl: item.thumbUrl,
-            }));
-            finalValue = JSON.stringify(saveFileList);
-          } else if (type === 13) {
-            const { fileList } = values[key];
-            const saveFileList = fileList.map(item => ({
-              uid: item.uid,
-              name: item.name,
-              status: item.status,
-              url: item.url,
-              thumbUrl: null,
-            }));
-            finalValue = JSON.stringify(saveFileList);
+            const fileList = values[key];
+            if (fileList && fileList.length > 0) {
+              const saveFileList = fileList.map(item => ({
+                uid: item.uid,
+                name: item.name,
+                status: item.status,
+                url: item.url,
+                thumbUrl: item.thumbUrl,
+              }));
+              finalValue = JSON.stringify(saveFileList);
+            } else {
+              finalValue = null;
+            }
           }
         }
         data.push({

@@ -69,7 +69,9 @@ export default {
   },
   treeShaking: true,
   targets: {
+    chrome: 58,
     ie: 11,
+    android: 4,
   },
   // 路由配置
   routes: pageRoutes,

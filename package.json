@@ -39,6 +39,7 @@
   "dependencies": {
     "@antv/data-set": "^0.10.1",
     "@babel/runtime": "^7.3.1",
+    "@babel/polyfill": "^7.0.0",
     "antd": "^3.19.1",
     "antd-mobile": "2.2.14",
     "bizcharts": "^3.4.3",

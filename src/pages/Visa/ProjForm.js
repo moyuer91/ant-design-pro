@@ -1,6 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import { Layout, Button, Drawer, Modal, message, Menu, Icon } from 'antd';
 import { connect } from 'dva';
+import Media from 'react-media';
 import Page from './Page';
 import ProjPreview from './components/ProjPreview';
 
@@ -362,4 +363,8 @@ class ProjForm extends PureComponent {
     );
   }
 }
-export default ProjForm;
+export default props => (
+  <Media query="(max-width: 599px)">
+    {isMobile => <ProjForm {...props} isMobile={isMobile} />}
+  </Media>
+);

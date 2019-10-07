@@ -15,10 +15,10 @@ class PassportUpload extends PureComponent {
     };
   }
 
-  handleChange = ({ file, fileList }) => {
+  handleChange = fileList => {
     const { onChange, mapResultToForm } = this.props;
-
-    if (file.status === 'done') {
+    const file = fileList[0];
+    if (file && file.status === 'done') {
       // 上传完成后进行解析
       const filedata = new FormData();
       filedata.append('file', file.originFileObj);
@@ -47,7 +47,6 @@ class PassportUpload extends PureComponent {
         }
       });
     }
-
     // const newValue=fileList.map(item=>({
     //   // uid:item.uid,
     //   // name:item.name,
@@ -59,20 +58,19 @@ class PassportUpload extends PureComponent {
 
     const newValue = [...fileList];
     if (onChange) {
-      onChange({ fileList: newValue, file });
+      onChange(newValue);
     }
-    this.setState({ value: { fileList: newValue } });
+    this.setState({ value: newValue });
   };
 
   render() {
-    const {
-      value: { fileList },
-    } = this.state;
+    const { value: fileList } = this.state;
     return (
       <div className="clearfix">
         <FileUpload
           {...this.props}
-          fileList={fileList}
+          accept="image/png, image/jpeg , image/jpg , image/bmp"
+          fileList={fileList || []}
           onChange={this.handleChange}
           uploadBtnText="上传护照"
         />

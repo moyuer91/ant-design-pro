@@ -394,7 +394,7 @@ class Page extends PureComponent {
         // 上传文件
         const initFileList = JSON.parse(value);
         elemItem = getFieldDecorator(id.toString(), {
-          initialValue: { fileList: initFileList } || { fileList: [] },
+          initialValue: initFileList || [],
           rules,
         })(<FileUpload data={{ basePath: projectId }} disabled={disabled} />);
       } else if (type === 13) {
@@ -414,7 +414,7 @@ class Page extends PureComponent {
           data: { basePath: projectId },
         };
         elemItem = getFieldDecorator(id.toString(), {
-          initialValue: { fileList: initFileList } || { fileList: [] },
+          initialValue: initFileList || [],
           rules,
         })(<PassportUpload {...props} />);
       } else if (type === 14) {
