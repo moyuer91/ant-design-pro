@@ -286,7 +286,7 @@ class ProjForm extends PureComponent {
 
   render() {
     const {
-      visaform: { activePageId, id, hasNext, hasPrevious, prjcfgDescr, city, appOrderNo },
+      visaform: { activePageId, id, hasNext, hasPrevious, prjcfgDescr, city },
       location: { query },
       isMobile,
     } = this.props;
@@ -319,7 +319,7 @@ class ProjForm extends PureComponent {
                       style={{ paddingLeft: 0 }}
                     />
                   ) : null}
-                  {`单号：${appOrderNo}`}
+                  {`编号：${id}`}
                 </span>
               }
               action={action}

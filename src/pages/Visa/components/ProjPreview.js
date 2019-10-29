@@ -186,7 +186,7 @@ class ProjPreview extends PureComponent {
 
   render() {
     const {
-      projPreview: { descr, city, appOrderNo, pagesData },
+      projPreview: { descr, city, pagesData, id },
       showSwitch,
       showModify = true,
     } = this.props;
@@ -217,7 +217,7 @@ class ProjPreview extends PureComponent {
     return (
       <div id="content">
         <PageHeader
-          title={`单号：${appOrderNo}`}
+          title={`编号：${id}`}
           action={action}
           content={
             <div>

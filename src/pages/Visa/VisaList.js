@@ -35,11 +35,6 @@ const CreateForm = Form.create()(props => {
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
     >
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="订单编号">
-        {form.getFieldDecorator('appOrderNo', {
-          rules: [{ required: true, message: '请输入订单编号！' }],
-        })(<Input placeholder="请输入" />)}
-      </FormItem>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="申请人">
         {form.getFieldDecorator('applicant', {
           rules: [{ required: true, message: '请输入申请人姓名！' }],
@@ -233,7 +228,14 @@ class VisaList extends PureComponent {
           <Col md={8} sm={24}>
             <FormItem label="申请国家">
               {getFieldDecorator('country')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
+                <Select
+                  showSearch
+                  placeholder="请选择"
+                  style={{ width: '100%' }}
+                  filterOption={(inputValue, option) =>
+                    option.props.children.indexOf(inputValue) >= 0
+                  }
+                >
                   {countryItems}
                 </Select>
               )}
@@ -277,7 +279,14 @@ class VisaList extends PureComponent {
           <Col md={8} sm={24}>
             <FormItem label="申请国家">
               {getFieldDecorator('country')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
+                <Select
+                  showSearch
+                  placeholder="请选择"
+                  style={{ width: '100%' }}
+                  filterOption={(inputValue, option) =>
+                    option.props.children.indexOf(inputValue) >= 0
+                  }
+                >
                   {countryItems}
                 </Select>
               )}
@@ -429,8 +438,8 @@ class VisaList extends PureComponent {
 
     const columns = [
       {
-        title: '订单编号',
-        dataIndex: 'appOrderNo',
+        title: '编号',
+        dataIndex: 'id',
         render: (text, record) => <a onClick={() => this.previewItem(record.id)}>{text}</a>,
       },
       {
