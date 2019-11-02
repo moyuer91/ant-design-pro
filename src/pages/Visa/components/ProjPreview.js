@@ -123,7 +123,7 @@ class ProjPreview extends PureComponent {
             <Descriptions key={`descrs_${i}`} title={label} border {...descriptionLayout} />
           );
         }
-      } else if (type !== 13) {
+      } else if (type !== 13 && type !== 17) {
         elements.push(item);
       }
     }
