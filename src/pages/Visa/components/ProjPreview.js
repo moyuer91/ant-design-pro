@@ -51,7 +51,7 @@ class ProjPreview extends PureComponent {
       if (showOriginalData) {
         return value.replace(/"/g, '');
       }
-      return engValue ? engValue.replace(/"/g, '') : value.replace(/"/g, '');
+      return engValue ? engValue.replace(/"/g, '') : value && value.replace(/"/g, '');
     }
     if (showOriginalData) {
       return value;

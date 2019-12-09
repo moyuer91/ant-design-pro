@@ -24,7 +24,7 @@ class Success extends PureComponent {
     const {
       location: { query },
     } = this.props;
-    const { appOrderNo, applicant } = query;
+    const { applicant } = query;
     const desc1 = (
       <div
         style={{
@@ -45,7 +45,7 @@ class Success extends PureComponent {
       <Fragment>
         <Row style={{ marginBottom: 16 }}>
           <Col xs={24}>
-            <span style={{ color: 'rgba(0, 0, 0, 0.85)' }}>申请单号：{appOrderNo}</span>
+            <span style={{ color: 'rgba(0, 0, 0, 0.85)' }}>申请单号：{query.id}</span>
             <span style={{ marginLeft: 20, color: 'rgba(0, 0, 0, 0.85)' }}>
               申请人：{applicant}
             </span>
