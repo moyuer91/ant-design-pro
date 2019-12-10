@@ -66,7 +66,7 @@ class PassportUpload extends PureComponent {
   render() {
     const { value: fileList } = this.state;
     return (
-      <div className="clearfix">
+      <div>
         <FileUpload
           {...this.props}
           accept="image/png, image/jpeg , image/jpg , image/bmp"

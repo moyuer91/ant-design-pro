@@ -95,12 +95,13 @@ class FileUpload extends PureComponent {
       </div>
     );
     return (
-      <div className="clearfix">
+      <div>
         <Upload
           {...this.props}
           // beforeUpload={this.beforeUpload}
           action={action}
           fileList={fileList || []}
+          className="file-uploader"
           headers={{
             DM_AUTH: getToken(),
           }}

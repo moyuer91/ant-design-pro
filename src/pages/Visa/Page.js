@@ -15,10 +15,10 @@ import {
   Divider,
   Checkbox,
   InputNumber,
-  // Cascader,
   Radio,
   Icon,
   Tooltip,
+  message,
 } from 'antd';
 import styles from './style.less';
 import FileUpload from './components/FileUpload';
@@ -37,6 +37,25 @@ function evil(fn) {
   const result = new Fn(`return ${fn}`)();
   return result;
 }
+const INPUT = 1;
+const TEXT_AREA = 2;
+const BLOCK_DIVIDER = 3;
+const DATE_PICKER = 4;
+const TIME_PICKER = 5;
+const RADIO_GROUP = 6;
+const CHECK_BOX = 7;
+const DATE_RANGE = 8;
+const CHECKBOX_GROUP = 9;
+const SELECT = 10;
+// const CASCADER=11;
+const IMAGE_UPLOADER = 12;
+const PASSPORT_UPLOADER = 13;
+const CITY_SELECTOR = 14;
+const INPUT_NUMBER = 15;
+const INPUT_EMAIL = 16;
+const DIVIDER = 17;
+const TABLE = 20;
+// const CARD=21;
 
 @connect(({ visapage, loading }) => ({
   visapage,
@@ -67,6 +86,15 @@ class Page extends PureComponent {
     });
   };
 
+  /**
+   * 是否可以保存，如果错误均是非空错误，则返回true
+   * @param values 保存的值
+   * @param errors 错误值
+   */
+  isSavable = (values, errors) => {
+    return !(errors && Object.keys(errors).filter(id => values[id]).length > 0);
+  };
+
   handleSave = e => {
     const {
       dispatch,
@@ -86,24 +114,30 @@ class Page extends PureComponent {
           e.preventDefault();
         }
         form.validateFieldsAndScroll((err, values) => {
-          if (!err) {
+          if (!err || this.isSavable(values, err)) {
             dispatch({
               type: 'visapage/save',
               payload: {
                 prjId: projectId,
                 pageId: id,
+                isComplete: !err,
                 values,
                 elementsMap,
               },
               callback: success => {
                 if (success) {
-                  resolve(values);
+                  resolve({ values, isComplete: !err });
                 } else {
-                  reject(err);
+                  reject(new Error('页面保存失败！'));
                 }
               },
             });
           } else {
+            if (e) {
+              // 单机保存按钮才会进行提示，切页不弹出提示
+              message.error(`保存失败：页面填写有误，请重新进行检查红框标识出的字段`);
+            }
+
             reject(err);
           }
         });
@@ -292,12 +326,12 @@ class Page extends PureComponent {
         }
       }
       let elemItem = null;
-      if (type === 1) {
+      if (type === INPUT) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
           rules,
         })(<Input placeholder={placeholder} style={{ display }} disabled={disabled} />);
-      } else if (type === 2) {
+      } else if (type === TEXT_AREA) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
           rules,
@@ -309,17 +343,17 @@ class Page extends PureComponent {
             disabled={disabled}
           />
         );
-      } else if (type === 4) {
+      } else if (type === DATE_PICKER) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value ? moment(value, 'YYYY-MM-DD') : null,
           rules,
         })(<DatePicker style={{ display }} disabled={disabled} />);
-      } else if (type === 5) {
+      } else if (type === TIME_PICKER) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value ? moment(value, 'HHmmss') : null,
           rules,
         })(<TimePicker disabled={disabled} />);
-      } else if (type === 6) {
+      } else if (type === RADIO_GROUP) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
           rules,
@@ -332,7 +366,7 @@ class Page extends PureComponent {
             disabled={disabled}
           />
         );
-      } else if (type === 7) {
+      } else if (type === CHECK_BOX) {
         // 单个checkbox
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value === 'true' || value === true,
@@ -351,7 +385,7 @@ class Page extends PureComponent {
             {label}
           </Checkbox>
         );
-      } else if (type === 8) {
+      } else if (type === DATE_RANGE) {
         const rangeInitVal =
           value && JSON.parse(value)
             ? JSON.parse(value).map(item => (item ? moment(item, 'YYYY-MM-DD') : null))
@@ -360,12 +394,12 @@ class Page extends PureComponent {
           initialValue: rangeInitVal,
           rules,
         })(<RangePicker disabled={disabled} />);
-      } else if (type === 9) {
+      } else if (type === CHECKBOX_GROUP) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: JSON.parse(value) || [],
           rules,
         })(<Checkbox.Group options={options.data} disabled={disabled} />);
-      } else if (type === 10) {
+      } else if (type === SELECT) {
         const optionData = this.getOptionData(options);
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
@@ -390,14 +424,14 @@ class Page extends PureComponent {
         //     initialValue: cascaDerValue,
         //     rules,
         //   })(<Cascader options={cascaDerOpitons} />);
-      } else if (type === 12) {
-        // 上传文件
+      } else if (type === IMAGE_UPLOADER) {
+        // 上传照片
         const initFileList = JSON.parse(value);
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: initFileList || [],
           rules,
         })(<FileUpload data={{ basePath: projectId }} disabled={disabled} />);
-      } else if (type === 13) {
+      } else if (type === PASSPORT_UPLOADER) {
         // 上传护照控件
         const mapRule = script ? JSON.parse(script) : {};
         const initFileList = JSON.parse(value);
@@ -417,26 +451,26 @@ class Page extends PureComponent {
           initialValue: initFileList || [],
           rules,
         })(<PassportUpload {...props} />);
-      } else if (type === 14) {
+      } else if (type === CITY_SELECTOR) {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
           rules,
         })(<CitySelect disabled={disabled} />);
-      } else if (type === 15) {
+      } else if (type === INPUT_NUMBER) {
         // 数字
         const actRules = [...rules];
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
           rules: actRules,
         })(<InputNumber placeholder={placeholder} style={{ display }} disabled={disabled} />);
-      } else if (type === 16) {
+      } else if (type === INPUT_EMAIL) {
         // 邮箱
         const actRules = [...rules, { type: 'email', message: '邮箱格式不正确' }];
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: value,
           rules: actRules,
         })(<Input placeholder={placeholder} style={{ display }} disabled={disabled} />);
-      } else if (type === 20) {
+      } else if (type === TABLE) {
         try {
           const columnsCfg = JSON.parse(script) || [];
           const tableData = JSON.parse(value) || [];
@@ -452,7 +486,7 @@ class Page extends PureComponent {
         }
       }
 
-      if (type === 20) {
+      if (type === TABLE) {
         return (
           <Card key={`card_${id}`} title={label} bordered={false}>
             {tip && <Card.Meta description={tip} />}
@@ -460,7 +494,7 @@ class Page extends PureComponent {
           </Card>
         );
       }
-      if (type === 7) {
+      if (type === CHECK_BOX) {
         // checkbox
         return (
           <FormItem key={elem.id} {...checkboxLayout}>
@@ -468,7 +502,7 @@ class Page extends PureComponent {
           </FormItem>
         );
       }
-      if (type === 3) {
+      if (type === BLOCK_DIVIDER) {
         // blockdivider
         return (
           <Card key={`card_${id}`} title={label} bordered={false}>
@@ -477,9 +511,9 @@ class Page extends PureComponent {
         );
       }
 
-      if (type === 17) {
+      if (type === DIVIDER) {
         // divider
-        return <Divider style={{ margin: '10 0 30' }} />;
+        return <Divider key={elem.id} style={{ margin: '10 0 30' }} />;
       }
       // const shortLabelLayout={span:}
 
@@ -519,7 +553,7 @@ class Page extends PureComponent {
                     style={{ marginLeft: 8 }}
                     onClick={handleNext}
                   >
-                    保存并下一页
+                    下一页
                   </Button>
                 )}
                 {!hasNext && (

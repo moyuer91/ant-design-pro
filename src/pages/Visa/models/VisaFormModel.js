@@ -99,16 +99,6 @@ export default {
     },
     switchTab(state, action) {
       const { activePageId: nextActivePageId } = action.payload;
-      // const newPages = [...state.pages];
-      // if (finished) {
-      //   for (let i = 0; i < newPages.length; i += 1) {
-      //     // 将当前页面的finished状态修改为true
-      //     if (newPages[i].id === state.activePageId) {
-      //       newPages[i].finished = true;
-      //       break;
-      //     }
-      //   }
-      // }
       window.scroll(0, 0);
       return {
         ...state,

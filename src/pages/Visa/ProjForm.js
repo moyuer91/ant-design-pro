@@ -12,6 +12,9 @@ import styles from './style.less';
 const { Content, Sider } = Layout;
 
 const ButtonGroup = Button.Group;
+
+const switchWarning =
+  '当前表单页未完成或者存在错误，点击确定则当前页面未保存的内容将丢失，点击取消可返回继续编辑，是否仍要切换？';
 @connect(({ visaform, loading }) => ({
   visaform,
   submitting: loading.effects['visaform/fetch'],
@@ -89,16 +92,13 @@ class ProjForm extends PureComponent {
 
   onSwitch = tabId => {
     const { dispatch } = this.props;
-    let finished = false;
     this.curPage.handleSave().then(
       () => {
         // 保存成功
-        finished = true;
         dispatch({
           type: 'visaform/switchTab',
           payload: {
             activePageId: parseInt(tabId, 10),
-            finished,
           },
         });
       },
@@ -106,7 +106,7 @@ class ProjForm extends PureComponent {
         // 保存失败
         Modal.confirm({
           title: '填写错误或未完成',
-          content: '当前表单页未完成或者存在错误，是否仍要切换？',
+          content: switchWarning,
           okText: '确认',
           cancelText: '取消',
           onOk: () => {
@@ -147,7 +147,7 @@ class ProjForm extends PureComponent {
           // 保存失败
           Modal.confirm({
             title: '填写错误或未完成',
-            content: '当前表单页未完成或者存在错误，是否仍要切换？',
+            content: switchWarning,
             okText: '确认',
             cancelText: '取消',
             onOk: () => {
@@ -271,7 +271,17 @@ class ProjForm extends PureComponent {
         </Menu>
       </Drawer>
     ) : (
-      <Sider trigger={null} width={256} theme="light">
+      <Sider
+        trigger={null}
+        width={256}
+        theme="light"
+        style={{
+          overflow: 'auto',
+          height: '100vh',
+          position: 'fixed',
+          left: 0,
+        }}
+      >
         <Menu
           mode="inline"
           onClick={this.onMenuItemClick}
@@ -305,8 +315,8 @@ class ProjForm extends PureComponent {
     return (
       <Layout>
         {this.SiderMenuWrapper()}
-        <Layout>
-          <Layout>
+        <Layout style={{ marginLeft: isMobile ? 0 : 256 }}>
+          <div>
             <PageHeader
               style={{ margin: '20px 10px 10px' }}
               title={
@@ -331,22 +341,22 @@ class ProjForm extends PureComponent {
                 </div>
               }
             />
-            <Content style={{ margin: '10px 10px 10px' }}>
-              <div style={{ padding: 0, minHeight: 360 }}>
-                <Page
-                  id={activePageId}
-                  key={`${id}_${activePageId}`}
-                  projectId={id}
-                  hasNext={hasNext}
-                  hasPrevious={hasPrevious}
-                  onRef={this.onRef}
-                  handleNext={this.handleNext}
-                  handlePrevious={this.handlePrevious}
-                  handleSubmit={this.handleSubmit}
-                />
-              </div>
-            </Content>
-          </Layout>
+          </div>
+          <Content style={{ margin: '10px 10px 10px' }}>
+            <div style={{ padding: 0, minHeight: 360 }}>
+              <Page
+                id={activePageId}
+                key={`${id}_${activePageId}`}
+                projectId={id}
+                hasNext={hasNext}
+                hasPrevious={hasPrevious}
+                onRef={this.onRef}
+                handleNext={this.handleNext}
+                handlePrevious={this.handlePrevious}
+                handleSubmit={this.handleSubmit}
+              />
+            </div>
+          </Content>
         </Layout>
         <Drawer
           title="签证申请单预览"

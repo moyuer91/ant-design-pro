@@ -33,7 +33,7 @@ export default {
       });
     },
     *save({ payload, callback }, { call, put }) {
-      const { pageId, prjId, values, elementsMap } = payload;
+      const { pageId, prjId, values, elementsMap, isComplete } = payload;
       const data = [];
       Object.keys(values).forEach(key => {
         let finalValue = values[key];
@@ -81,8 +81,8 @@ export default {
         });
       });
 
-      const response = yield call(saveVisaPage, { id: pageId, prjId, data });
-      let finished = true;
+      const response = yield call(saveVisaPage, { id: pageId, prjId, data, isComplete });
+      let finished = isComplete;
       let success = true;
       if (isSuccessful(response)) {
         message.success('保存成功');
