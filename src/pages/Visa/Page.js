@@ -92,7 +92,19 @@ class Page extends PureComponent {
    * @param errors 错误值
    */
   isSavable = (values, errors) => {
-    return !(errors && Object.keys(errors).filter(id => values[id]).length > 0);
+    return !(
+      errors &&
+      Object.keys(errors).filter(
+        id =>
+          !(
+            values[id] === null ||
+            values[id] === undefined ||
+            values === '' ||
+            (Array.isArray(values[id]) && values[id].length === 0) ||
+            JSON.stringify(values[id]) === '{}'
+          )
+      ).length > 0
+    );
   };
 
   handleSave = e => {
