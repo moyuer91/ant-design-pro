@@ -99,7 +99,7 @@ class Page extends PureComponent {
           !(
             values[id] === null ||
             values[id] === undefined ||
-            values === '' ||
+            values[id] === '' ||
             (Array.isArray(values[id]) && values[id].length === 0) ||
             JSON.stringify(values[id]) === '{}'
           )
