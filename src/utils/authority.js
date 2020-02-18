@@ -22,10 +22,14 @@ export function setAuthority(authority) {
 }
 
 export function getToken() {
-  const token = sessionStorage.getItem('DM_AUTH');
+  // const token = sessionStorage.getItem('DM_AUTH');
+  // const token = cookie.load('DM_AUTH');
+  const token = window.DM_AUTH;
   return token;
 }
 
 export function setToken(token) {
-  return sessionStorage.setItem('DM_AUTH', token);
+  window.DM_AUTH = token;
+  // return cookie.save('DM_AUTH', {path:'/'});
+  // return sessionStorage.setItem('DM_AUTH', token);
 }

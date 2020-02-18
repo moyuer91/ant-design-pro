@@ -73,16 +73,17 @@ class FileUpload extends PureComponent {
     });
   };
 
-  beforeUpload = file => {
+  beforeUpload = () => {
     // const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
     // if (!isJpgOrPng) {
     //   message.error('格式必须是JPG或PNG!');
     // }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      message.error('图片大小不能超过2MB!');
-    }
-    return isLt2M;
+    // const isLt2M = file.size / 1024 / 1024 < 200;
+    // if (!isLt2M) {
+    //   message.error('图片大小不能超过200MB!');
+    // }
+    // return isLt2M;
+    return true;
   };
 
   render() {

@@ -8,9 +8,18 @@ const { Step } = Steps;
 
 class Success extends PureComponent {
   onBackToMain = () => {
-    window.opener = null; // 禁止某些浏览器的一些弹窗
-    window.open('', '_self');
-    window.close();
+    const {
+      location: { query },
+    } = this.props;
+    const { backurl } = query;
+    if (backurl) {
+      window.location.href = backurl;
+      // window.location.href='https://visa.dameiweb.com/#/myVisa?token=AUTH__APP_1063_967c7e60-466a-4f4e-9f21-556755c2cb5e';
+    } else {
+      window.opener = null; // 禁止某些浏览器的一些弹窗
+      window.open('', '_self');
+      window.close();
+    }
   };
 
   viewDetail = () => {

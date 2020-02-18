@@ -38,7 +38,14 @@ export default {
 
       yield put({
         type: 'getForm',
-        payload: { ...project, activePageId, lastPageId, firstPageId },
+        payload: {
+          ...project,
+          activePageId,
+          lastPageId,
+          firstPageId,
+          hasNext: !(activePageId === lastPageId),
+          hasPrevious: !(activePageId === firstPageId),
+        },
       });
     },
 
@@ -56,12 +63,13 @@ export default {
     *submit({ payload }, { call, put, select }) {
       const response = yield call(submitVisaProject, payload);
       const { appOrderNo, applicant, id } = yield select(state => state.visaform);
+      const { backurl } = payload;
       yield put(
         routerRedux.push(
           isSuccessful(response)
             ? {
                 pathname: '/visa/result/success',
-                query: { appOrderNo, applicant, id },
+                query: { appOrderNo, applicant, id, backurl },
               }
             : '/visa/result/error'
         )

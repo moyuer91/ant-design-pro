@@ -8,6 +8,7 @@ import ProjPreview from './components/ProjPreview';
 import PageHeader from '@/components/PageHeader';
 import { setToken } from '@/utils/authority';
 import styles from './style.less';
+// import { getToken } from '../../utils/authority';
 
 const { Content, Sider } = Layout;
 
@@ -39,7 +40,6 @@ class ProjForm extends PureComponent {
     if (query.token) {
       setToken(query.token);
     }
-
     dispatch({
       type: 'visaform/fetch',
       payload: {
@@ -204,6 +204,7 @@ class ProjForm extends PureComponent {
     const {
       dispatch,
       match,
+      location: { query },
       visaform: { pages },
     } = this.props;
     const { params } = match;
@@ -221,6 +222,7 @@ class ProjForm extends PureComponent {
     dispatch({
       type: 'visaform/submit',
       payload: {
+        backurl: query.backurl,
         projectId: params.id,
       },
     });

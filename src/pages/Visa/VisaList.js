@@ -142,7 +142,7 @@ class VisaList extends PureComponent {
 
   previewItem = id => {
     // router.push(`/visa/applform/${id}`);
-    window.open(`/visa/applform/${id}`);
+    window.open(`/visa/applform/${id}?token=${window.DM_AUTH}`);
   };
 
   handleFormReset = () => {
@@ -202,7 +202,7 @@ class VisaList extends PureComponent {
 
   handleUpdateModalVisible = (flag, record) => {
     // router.push(`/visa/applform/${record.id}`);
-    window.open(`/visa/applform/${record.id}`);
+    window.open(`/visa/applform/${record.id}?token=${window.DM_AUTH}`);
   };
 
   handleAdd = fields => {
