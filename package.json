@@ -51,6 +51,7 @@
     "hash.js": "^1.1.7",
     "lodash": "^4.17.11",
     "lodash-decorators": "^6.0.1",
+    "lrz": "4.9.40",
     "memoize-one": "^5.0.0",
     "moment": "^2.24.0",
     "numeral": "^2.0.6",
