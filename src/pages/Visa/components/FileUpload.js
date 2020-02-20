@@ -63,7 +63,7 @@ function compress(file) {
       return lrz(file, { quality: ratio })
         .then(rst => {
           // 数字越小，压缩率越高
-          console.log(rst);
+          // console.log(rst);
           return backPromise(rst);
         })
         .catch(() => {
