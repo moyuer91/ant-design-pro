@@ -442,7 +442,7 @@ class Page extends PureComponent {
         elemItem = getFieldDecorator(id.toString(), {
           initialValue: initFileList || [],
           rules,
-        })(<FileUpload data={{ basePath: projectId }} disabled={disabled} />);
+        })(<FileUpload data={{ basePath: projectId }} disabled={disabled} compressPic />);
       } else if (type === PASSPORT_UPLOADER) {
         // 上传护照控件
         const mapRule = script ? JSON.parse(script) : {};

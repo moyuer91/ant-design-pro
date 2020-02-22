@@ -25,10 +25,8 @@ class PassportUpload extends PureComponent {
     const { onChange, mapResultToForm } = this.props;
     const file = fileList[0];
     if (file && file.status === 'done') {
-      // 解析时间较长，需要增加进度提示
-      // this.setState({ loading: true });
-      // 上传完成后进行解析
       try {
+        // 解析护照识别的返回值
         const { passportInfo } = getCheckedData(file.response);
         const passportObj = JSON.parse(passportInfo);
         if (passportObj) {
@@ -46,12 +44,15 @@ class PassportUpload extends PureComponent {
           message.error('无法识别护照，请手动录入信息');
         }
         // 去除解析进度条
-        // this.setState({ loading: false });
+        this.setState({ loading: false });
       } catch (e) {
         message.error('无法识别护照，请手动录入信息');
         // 去除解析进度条
-        // this.setState({ loading: false });
+        this.setState({ loading: false });
       }
+    } else if (file && file.status === 'uploading' && file.percent === 100) {
+      // 解析时间较长，需要增加进度提示
+      this.setState({ loading: true });
     }
 
     const newValue = [...fileList];
@@ -65,7 +66,7 @@ class PassportUpload extends PureComponent {
     const { value: fileList, loading } = this.state;
     return (
       <div>
-        <Spin spinning={loading} tip="图片较大，护照信息解析需要一会儿,请稍候..." delay={500}>
+        <Spin spinning={loading} tip="正在识别您的护照信息，请稍候..." delay={500}>
           <FileUpload
             {...this.props}
             action={analyzePassportAction}
